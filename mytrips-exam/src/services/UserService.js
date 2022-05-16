@@ -2,7 +2,7 @@ const token = localStorage.getItem("token");
 
 export default {
   async createUser(dati) {
-    await fetch("api/trips/user/create", {
+    await fetch("/WPExamProject/api/user/create", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -13,7 +13,7 @@ export default {
   },
 
   async authenticateUser(dati) {
-    await fetch("http://localhost:8080/api/trips/user/authenticate", {
+    await fetch("/WPExamProject/api/user/authenticate", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -24,13 +24,14 @@ export default {
   },
 
   async updateUser(dati) {
-    await fetch("api/trips/user/update", {
+    await fetch("/WPExamProject/api/user/update", {
       method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         "x-access-token": token,
       },
+      // body: JSON.stringify(dati),
       body: JSON.stringify(dati),
     });
   },

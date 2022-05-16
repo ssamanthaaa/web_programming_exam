@@ -1,7 +1,8 @@
 <template>
   <div class="container">
-    <Header />
+    <!-- <Header /> -->
     <main>
+      prova
       <div class="row">
         <div class="col"><Map /></div>
         <!-- <div class="col"><ModificableMap/></div> -->
@@ -70,7 +71,7 @@
     </main>
     <!-- <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <Footer />
+    <!-- <Footer /> -->
   </div>
 </template>
 
@@ -78,8 +79,8 @@
 // import HelloWorld from './components/HelloWorld.vue'
 import { mapGetters, mapActions } from "vuex";
 import moment from "moment";
-import Header from "@/components/Header.vue";
-import Footer from "@/components/Footer.vue";
+// import Header from "@/components/Header.vue";
+// import Footer from "@/components/Footer.vue";
 import Map from "@/components/Map.vue";
 // import ModificableMap from '@/components/ModificableMap.vue';
 
@@ -87,8 +88,8 @@ export default {
   name: "Dashboard-component",
   components: {
     // HelloWorld,
-    Header,
-    Footer,
+    // Header,
+    // Footer,
     Map,
     // ModificableMap
   },
@@ -122,15 +123,6 @@ export default {
 </script>
 
 <style scoped>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
 .colored:hover {
   background-color: #c2dff3;
 }

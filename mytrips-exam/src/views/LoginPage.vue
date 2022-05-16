@@ -19,7 +19,7 @@
               <div class="illustration">
                 <Icon icon="carbon:locked" style="" />
               </div>
-              <form class="form-group">
+              <form class="form-group" @submit.prevent>
                 <input
                   v-model="username"
                   type="text"
@@ -34,12 +34,13 @@
                   placeholder="Password"
                   required
                 />
-                <input
+                <!-- <input
                   type="submit"
                   class="btn gradient"
                   @click="doLogin"
                   value="Log In"
-                />
+                /> -->
+                <button class="btn gradient" @click="doLogin()">Log In</button>
                 <p>
                   Don't have an account?
                   <a
@@ -63,12 +64,12 @@
               <div class="illustration">
                 <Icon icon="carbon:locked" />
               </div>
-              <form class="form-group">
+              <form class="form-group" @submit.prevent>
                 <input
-                  v-model="email"
-                  type="email"
+                  v-model="username"
+                  type="text"
                   class="form-control"
-                  placeholder="Email"
+                  placeholder="Username"
                   required
                 />
                 <input
@@ -85,12 +86,15 @@
                   placeholder="Confirm Password"
                   required
                 />
-                <input
+                <!-- <input
                   type="submit"
                   class="btn gradient"
                   @click="doRegister"
                   value="Register"
-                />
+                /> -->
+                <button class="btn gradient" @click="doRegister()">
+                  Register
+                </button>
                 <p>
                   Already have an account?
                   <a
@@ -149,46 +153,84 @@ export default {
       ) {
         this.emptyFields = true;
       } else {
-        let valori = { USERNAME: this.username, PASSWORD: this.password };
+        let valori = { username: this.username, password: this.password };
         console.log(`valori: `);
         console.log(valori);
         console.log(`JSON.stringify(valori): `);
         console.log(JSON.stringify(valori));
-        let response = await UserService.authenticateUser(valori);
-        console.log(response);
-        console.log("response.data");
-        console.log(response.data);
-        if (response.status == 200) {
-          this.$router.push({
-            path: "/dashboard",
+        // let valoriRisposta = null;
+        // let risposta =
+        await UserService.authenticateUser(valori)
+          // .then((valoriRisposta) => response)
+          // .then((response) => {
+          //   console.log("response dentro then");
+          //   console.log(response);
+          //   valoriRisposta = response;
+          // })
+          // .catch(function (error) {
+          //   console.log(error);
+          //   alert("errore");
+          // });
+          .then((response) => console.log(response))
+          .then((data) => {
+            console.log("Success:", data);
+          })
+          .catch(function (error) {
+            console.log(error);
+            alert("errore");
           });
-        } else {
-          alert("Credendiali sbalgiate");
-        }
+        // console.log("risposta");
+        // console.log(risposta);
+        // console.log("valoriRisposta");
+        // console.log(valoriRisposta);
+        // console.log("response.x-access-token");
+        // console.log(response["x-access-token"]);
+        // if (response.status == 200) {
+        //   this.$router.push({
+        //     path: "/dashboard",
+        //   });
+        // } else {
+        //   alert("Credendiali sbalgiate");
+        // }
         // alert("You are now logged in");
       }
     },
 
     async doRegister() {
       if (
-        this.email === "" ||
+        this.username === "" ||
         this.password === "" ||
         this.confirmPassword === "" ||
-        this.email == null ||
+        this.username == null ||
         this.password == null ||
         this.confirmPassword == null
       ) {
         this.emptyFields = true;
+      } else if (this.password != this.confirmPassword) {
+        alert("Password diverse");
       } else {
-        let valori = { USERNAME: this.username, PASSWORD: this.password };
+        let valori = { username: this.username, password: this.password };
         console.log(`valori: `);
         console.log(valori);
         console.log(`JSON.stringify(valori): `);
         console.log(JSON.stringify(valori));
-        let response = await UserService.createUser(valori);
+        let response;
+        let valoriRisposta = null;
+        await UserService.createUser(valori);
+        // .then((response) => {
+        //   valoriRisposta = response;
+        // })
+        // .catch(function (error) {
+        //   console.log(error);
+        //   alert("errore");
+        // });
+        console.log("response");
         console.log(response);
-        console.log("response.data");
-        console.log(response.data);
+        console.log("valoriRisposta");
+        console.log(valoriRisposta);
+        console.log("response.x-access-token");
+        console.log(response["x-access-token"]);
+        // localStorage.addItem('token', )
         if (response.status == 200) {
           this.$router.push({
             path: "/dashboard",

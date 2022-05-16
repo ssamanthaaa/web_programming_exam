@@ -14,12 +14,15 @@ Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
+// import LDrawToolbar from "vue2-leaflet-draw-toolbar";
+
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 
 Vue.component("l-map", LMap);
 Vue.component("l-tile-layer", LTileLayer);
 Vue.component("l-marker", LMarker);
+// Vue.component("l-draw-toolbar", LDrawToolbar);
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({

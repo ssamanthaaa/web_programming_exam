@@ -4,6 +4,7 @@ import VueRouter from "vue-router";
 import LoginPage from "../views/LoginPage.vue";
 import Dashboard from "../views/Dashboard.vue";
 import ModificaViaggio from "../views/ModificaViaggio.vue";
+import ModificaViaggioVecchio from "../views/ModificaViaggioVecchio.vue";
 import Errore from "../views/Errore.vue";
 
 Vue.use(VueRouter);
@@ -28,6 +29,11 @@ const routes = [
     path: "/modifica-viaggio",
     name: "ModificaViaggio",
     component: ModificaViaggio,
+  },
+  {
+    path: "/modifica-viaggio-vecchio",
+    name: "ModificaViaggioVecchio",
+    component: ModificaViaggioVecchio,
   },
   {
     path: "/*",

@@ -1,6 +1,8 @@
 <template>
   <div class="container">
+    <Header />
     <main>
+      <!-- <section> -->
       <div class="row">
         <!-- container myContainer -->
         <div class="heading col" v-if="id != null">
@@ -10,8 +12,32 @@
           <h2>Aggiungi viaggio</h2>
         </div>
       </div>
+
+      <!-- <div>
+                    <modificable-map></modificable-map>
+                </div> -->
+      <!-- <div class="container"> -->
       <div class="row justify-content-center">
-        <DrawableMap />
+        <l-map style="height: 400px; width: 100%" :zoom="zoom" :center="center">
+          <!-- :bounds="bounds"  -->
+          <!-- <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer> -->
+          <!-- (->scritta in basso) questo carica la mappa -->
+          <!-- <l-control-zoom position="bottomright"  ></l-control-zoom> -->
+          <!-- <l-marker :lat-lng="markerLatLng"></l-marker> -->
+          <l-marker
+            v-for="(marker, index) in markers"
+            :key="index"
+            :draggable="marker.draggable"
+            :lat-lng.sync="marker.POSIZIONE"
+            :icon="marker.icon"
+            @click="alert(marker.tooltip)"
+            ><!-- :visible="marker.visible"-->
+            <!-- <l-popup :content="marker.tooltip" />
+                            <l-tooltip :content="marker.tooltip" /> -->
+          </l-marker>
+          <l-polyline :lat-lngs="polylines"></l-polyline
+          ><!--  v-if="showPolyline" -->
+        </l-map>
       </div>
       <hr />
       <input
@@ -20,6 +46,7 @@
         value="AGGIORNA PERCORSO"
         @click="createPath()"
       />
+      <!-- </div> -->
       <form @submit.prevent>
         <div class="mb-3">
           <label class="form-label" for="data">Data</label
@@ -44,6 +71,23 @@
           </select>
         </div>
         <div class="mb-3">
+          <!-- <div class="row">
+                            <h5>Percorso</h5>
+                            <table class="table" v-if="percorso.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>Latitudine</th>
+                                        <th>Longitudine</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="colored" v-for="(value, index) in percorso" v-bind:key="index">
+                                    <td>{{value.LATITUDINE}}</td>
+                                    <td>{{value.LONGITUDINE}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
           <div class="row">
             <h5>Punto di partenza</h5>
             <div class="col">
@@ -232,17 +276,38 @@
       <!-- </div> -->
       <!-- </section> -->
     </main>
+    <Footer />
   </div>
 </template>
 
 <script>
-import DrawableMap from "@/components/DrawableMap.vue";
-// import moment from "moment";
+// import HelloWorld from './components/HelloWorld.vue'
+import { mapGetters, mapActions } from "vuex";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
+// import ModificableMap from '@/components/ModificableMap.vue';
+import draggable from "vuedraggable";
+import moment from "moment";
+import { latLngBounds } from "leaflet";
+import {
+  LMap,
+  // LTileLayer,
+  LMarker,
+  LPolyline /*  LLayerGroup, LControlZoom */,
+} from "vue2-leaflet";
 
 export default {
   name: "ModificaViaggio",
   components: {
-    DrawableMap,
+    // HelloWorld,
+    Header,
+    Footer,
+    // ModificableMap,
+    draggable,
+    LMap,
+    // LTileLayer,
+    LMarker,
+    LPolyline,
   },
   //   props: { markers: Array },
   data() {
@@ -272,25 +337,32 @@ export default {
       trip: [],
 
       // map
-      // url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      // attribution:
-      //   '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      // zoom: 8,
-      // center: [45.65052568917208, 13.76517096104127], //[51.505, -0.09]
-      // markerLatLng: [51.505, -0.09],
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attribution:
+        '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      zoom: 8,
+      center: [45.65052568917208, 13.76517096104127], //[51.505, -0.09]
+      markerLatLng: [51.505, -0.09],
       // markers: [],
       // polylines: [],
       // stuff: [],
       // id: null,
       // showPolyline: true,
-      // bounds: latLngBounds(
-      //   { lat: 51.476483373501964, lng: -0.14668464136775586 },
-      //   { lat: 51.52948330894063, lng: -0.019140238291583955 }
-      // ),
+      bounds: latLngBounds(
+        { lat: 51.476483373501964, lng: -0.14668464136775586 },
+        { lat: 51.52948330894063, lng: -0.019140238291583955 }
+      ),
     };
   },
   methods: {
-    /*
+    ...mapActions(["addTrip", "addNewTrip", "getTrip", "updateTrip"]),
+    // onUserSubmit() {
+    //    if (this.id == null) {
+    //         this.addNewTrip(this.trip);
+    //    } else {
+    //         this.addTrip(this.trip);
+    //    }
+    // },
     alert(item) {
       alert("Luogo: " + JSON.stringify(item));
     },
@@ -356,17 +428,16 @@ export default {
       console.log(
         `luogo_modal: ${this.luogo_modal}, lat_modal: ${this.latitudine_modal}, lgn_modal: ${this.longitudine_modal}`
       );
-    },*/
-    /*
+    },
+
     getDate(datetime) {
       return moment(String(datetime)).format("YYYY-MM-DD");
     },
 
     getDateDMY(datetime) {
       return moment(String(datetime)).format("DD/MM/YYYY");
-    },*/
+    },
 
-    /*
     loadTrip: async function () {
       // let valori = await fetch(`api/trips/${this.id}`);
       // this.trip = await valori.json();
@@ -374,7 +445,7 @@ export default {
       console.log("creatd: after get trip");
       console.log(`trips:`);
       console.log(trip);
-      this.data = this.getDate(trip.DATA); 
+      this.data = this.getDate(trip.DATA); // .$date
       this.luogo = trip.LUOGO;
       this.mezzo = trip.MEZZO;
       this.percorso = trip.PERCORSO;
@@ -395,10 +466,15 @@ export default {
       console.log(this.polylines);
       this.updateValues();
       this.createPath();
-      
-    },*/
+    },
+
+    removeMarker: function (index) {
+      this.tappe.splice(index, 1);
+      this.polylines.splice(index, 1);
+    },
 
     saveTrip: async function () {
+      // let data;
       this.percorso = {
         PARTENZA_LAT: this.partenza_latitudine,
         PARTENZA_LNG: this.partenza_longitudine,
@@ -416,6 +492,7 @@ export default {
           TAPPE_PRINCIPALI: this.tappe,
           DATA: this.data,
         };
+        // console.log(this.trip);
         console.log("stampo json trip");
         console.log(JSON.stringify(trip));
         // data = await fetch("api/trips/", {
@@ -453,9 +530,45 @@ export default {
         // });
         this.updateTrip(JSON.stringify(trip));
       }
+      // trip = await data.json();
+      // console.log("trip dopo json");
+      // console.log(trip);
+    },
+
+    updateTappa: function () {
+      console.log(this.tappe[this.i]);
+      this.tappe[this.i].LUOGO_TAPPA = this.luogo_modal;
+      this.tappe[this.i].POSIZIONE.lat = this.latitudine_modal;
+      this.tappe[this.i].POSIZIONE.lng = this.longitudine_modal;
+      this.showModal = false;
+      this.createPath();
+    },
+
+    updateValues: function () {
+      console.log("update values modifica viaggio");
+      this.$store.state.markers = this.tappe;
+      console.log(this.$store.state.markers);
+      this.$store.state.polylines = this.polylines;
+      this.createPath();
     },
   },
-  computed: {},
+  computed: {
+    ...mapGetters(["markersList", "polylineList", "singleTrip"]),
+  },
+
+  async mounted() {
+    console.log("mounted");
+  },
+
+  async created() {
+    this.id = this.$route.query.id;
+    console.log("creatd: before get trip");
+    if (this.id != null) {
+      this.loadTrip();
+    } else {
+      console.log("inserisci viaggio");
+    }
+  },
 };
 </script>
 
