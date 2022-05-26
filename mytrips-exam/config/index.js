@@ -7,7 +7,7 @@ module.exports = {
     
     dev: {
         assetsSubDirectory: 'static',
-        assetsPublicPath: '/WPExamProject/',
+        assetsPublicPath: '/WPTripExamProject/',
         // assetsPublicPath: '/',
         proxyTable: {},
 
@@ -22,7 +22,7 @@ module.exports = {
         //Paths
         assetsRoot: path.resolve(__dirname, '..dist/'),
         assetsSubDirectory: 'static',
-        assetsPublicPath: '/WPExamProject/',
+        assetsPublicPath: '/WPTripExamProject/',
         productionSourceMap: true,
     },
 

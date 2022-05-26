@@ -1,17 +1,18 @@
 <template>
-  <section class="portfolio-block">
-    <div class="container">
-      <!-- <div class="heading">
+  <!-- <section> -->
+  <div>
+    <!-- <div class="heading">
                 <h2>Map</h2>
             </div> -->
-      <div class="row justify-content-center">
-        <l-map
-          style="height: 400px; width: 900px"
-          :zoom="zoom"
-          :center="center"
-        >
-          <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-          <l-marker
+    <div class="constainer justify-content-center">
+      <l-map
+        style="height: 600px; width: 100%"
+        :zoom="zoom"
+        :center="center"
+        ref="map"
+      >
+        <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+        <!-- <l-marker
             v-for="(marker, index) in markers"
             :key="index"
             :lat-lng.sync="marker.position"
@@ -19,37 +20,43 @@
             @click="alert(marker.tooltip)"
             draggable="false"
           ></l-marker
-          ><!-- :lat-lng="markerLatLng" -->
-        </l-map>
-        <l-polyline
+          > -->
+        <!-- :lat-lng="markerLatLng" -->
+      </l-map>
+      <!-- <l-polyline
           v-for="(value, index) in allPolylines"
           :key="index"
           :lat-lngs="value"
           :icon="marker.icon"
-        ></l-polyline>
-      </div>
+        ></l-polyline> -->
     </div>
-  </section>
+  </div>
+  <!-- </section> -->
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
+import * as L from "leaflet";
+import { LMap, LTileLayer /*LMarker*/ } from "vue2-leaflet";
 import { latLngBounds } from "leaflet";
 
 export default {
+  props: {
+    pathJson: Object,
+  },
   name: "map-component",
   components: {
     LMap,
     LTileLayer,
-    LMarker,
+    // LMarker,
   },
   data() {
     return {
+      map: null,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      zoom: 15,
-      markerLatLng: [51.504, -0.159],
+      zoom: 10,
+      markerLatLng: [45.859412, 13.601074],
       center: [45.65052568917208, 13.76517096104127],
       allMarkers: [],
       allPolylines: [],
@@ -64,6 +71,26 @@ export default {
       alert("Luogo: " + JSON.stringify(item));
     },
 
+    loadMap() {
+      this.map = this.$refs.map.mapObject;
+      let drawnItems = new L.FeatureGroup().addTo(this.map);
+      function onEachFeature(feature, layer) {
+        drawnItems.addLayer(layer);
+      }
+      console.log("carico pathjson");
+      console.log(this.pathJson);
+      if (this.pathJson.length > 0) {
+        // let mygeojson =
+        for (let i = 0; i < this.pathJson.length; ++i) {
+          L.geoJson(this.pathJson[i], {
+            onEachFeature: onEachFeature,
+            color: "red",
+          }).addTo(this.map);
+        }
+      }
+    },
+
+    /*
     createPath: function () {
       const bounds = latLngBounds(this.allMarkers.map((o) => o.position));
       // console.log(bounds);
@@ -78,10 +105,11 @@ export default {
           this.$store.state.trips[i].TAPPE_PRINCIPALI.position;
       }
       this.createPath();
-    },
+    },*/
   },
   mounted() {
     // this.getValori();
+    this.loadMap();
   },
 };
 /*

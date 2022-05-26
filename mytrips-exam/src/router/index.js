@@ -6,10 +6,16 @@ import Dashboard from "../views/Dashboard.vue";
 import ModificaViaggio from "../views/ModificaViaggio.vue";
 import ModificaViaggioVecchio from "../views/ModificaViaggioVecchio.vue";
 import Errore from "../views/Errore.vue";
+import ProvaMappa from "../components/ProvaMappaVecchio.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: "/prova-mappa",
+    name: "provaMappa",
+    component: ProvaMappa,
+  },
   {
     path: "/login",
     name: "Login",

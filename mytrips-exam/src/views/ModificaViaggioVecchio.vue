@@ -18,7 +18,12 @@
                 </div> -->
       <!-- <div class="container"> -->
       <div class="row justify-content-center">
-        <l-map style="height: 400px; width: 100%" :zoom="zoom" :center="center">
+        <l-map
+          style="height: 400px; width: 100%"
+          ref="map"
+          :zoom="zoom"
+          :center="center"
+        >
           <!-- :bounds="bounds"  -->
           <!-- <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer> -->
           <!-- (->scritta in basso) questo carica la mappa -->
@@ -289,6 +294,7 @@ import Footer from "@/components/Footer.vue";
 import draggable from "vuedraggable";
 import moment from "moment";
 import { latLngBounds } from "leaflet";
+
 import {
   LMap,
   // LTileLayer,

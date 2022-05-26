@@ -13,4 +13,8 @@ export default {
   props: {},
 };
 </script>
-<style></style>
+<style>
+footer {
+  margin-top: 40px;
+}
+</style>

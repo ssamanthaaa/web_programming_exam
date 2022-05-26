@@ -35,4 +35,6 @@ new Vue({
   router,
   store,
   render: (h) => h(App),
+  Base: "/ WPTripExam /",
+  mode: "history",
 }).$mount("#app");

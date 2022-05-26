@@ -22,7 +22,7 @@
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="/LogoutServlet">Logout</a>
+            <a class="nav-link active" href="#">Logout</a>
           </li>
         </ul>
       </div>
