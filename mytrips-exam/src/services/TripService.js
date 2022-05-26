@@ -1,41 +1,80 @@
-const token = localStorage.getItem("token");
+import axios from "axios";
+// const token = localStorage.getItem("token");
+// const idUser = localStorage.getItem("id");
+const url = "/WPTripExamProject/api/";
 
 export default {
-  async getAllTrips(idUser) {
-    await fetch("/WPExamProject/api/" + idUser + "/trips/", {
-      method: "GET",
+  async getAllTrips(idUser, token) {
+    // const response = await fetch(url + idUser + "/trips", {
+    //   method: "GET",
+    //   headers: {
+    //     "x-access-token": token,
+    //   },
+    // });
+    // return response.json();
+    return axios.get(url + idUser + "/trips/", {
       headers: {
         "x-access-token": token,
       },
     });
   },
 
-  async getTrip(idUser, idTrip) {
-    await fetch("/WPExamProject/api/" + idUser + "/trips/" + idTrip, {
-      method: "GET",
+  async getTrip(idUser, idTrip, token) {
+    // const response = await fetch(url + idUser + "/trips/" + idTrip, {
+    //   method: "GET",
+    //   headers: {
+    //     "x-access-token": token,
+    //   },
+    // });
+    // return response.json();
+    return axios.get(url + idUser + "/trips/" + idTrip, {
       headers: {
         "x-access-token": token,
       },
     });
   },
 
-  async createTrips(idUser, dati) {
-    await fetch("/WPExamProject/api/" + idUser + "/trips/", {
-      method: "POST",
+  async createTrip(idUser, token, dati) {
+    // const response = await fetch(url + idUser + "/trips/", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-type": "application/json",
+    //     "x-access-token": token,
+    //   },
+    //   body: JSON.stringify(dati),
+    // });
+    // return response.json();
+    return axios.post(url + idUser + "/trips/", JSON.stringify(dati), {
       headers: {
+        "Content-type": "application/json",
         "x-access-token": token,
       },
-      body: dati,
     });
   },
 
-  async updateTrips(idUser, dati) {
-    await fetch("/WPExamProject/api/" + idUser + "/trips/", {
-      method: "PUT",
+  async updateTrip(idUser, idTrip, token, dati) {
+    // const response = await fetch(url + idUser + "/trips/" + idTrip, {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-type": "application/json",
+    //     "x-access-token": token,
+    //   },
+    //   body: JSON.stringify(dati),
+    // });
+    // return response.json();
+    return axios.put(url + idUser + "/trips/" + idTrip, JSON.stringify(dati), {
+      headers: {
+        "Content-type": "application/json",
+        "x-access-token": token,
+      },
+    });
+  },
+
+  async deleteTrip(idUser, idTrip, token) {
+    return axios.delete(url + idUser + "/trips/" + idTrip, {
       headers: {
         "x-access-token": token,
       },
-      body: JSON.stringify(dati),
     });
   },
 };
