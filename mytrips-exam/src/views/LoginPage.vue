@@ -21,14 +21,14 @@
               </div>
               <form class="form-group" @submit.prevent>
                 <input
-                  v-model="username"
+                  v-model="usernameLogin"
                   type="text"
                   class="form-control"
                   placeholder="Username"
                   required
                 />
                 <input
-                  v-model="password"
+                  v-model="passwordLogin"
                   type="password"
                   class="form-control"
                   placeholder="Password"
@@ -66,14 +66,21 @@
               </div>
               <form class="form-group" @submit.prevent>
                 <input
-                  v-model="username"
+                  v-model="email"
+                  type="email"
+                  class="form-control"
+                  placeholder="Email"
+                  required
+                />
+                <input
+                  v-model="usernameRegistration"
                   type="text"
                   class="form-control"
                   placeholder="Username"
                   required
                 />
                 <input
-                  v-model="password"
+                  v-model="passwordRegistration"
                   type="password"
                   class="form-control"
                   placeholder="Password"
@@ -119,6 +126,7 @@
 // import Registrazione from '@/components/Registrazione.vue';
 import UserService from "@/services/UserService.js";
 import { Icon } from "@iconify/vue2";
+// import axios from "axios";
 
 export default {
   name: "LoginPage",
@@ -132,113 +140,123 @@ export default {
   data() {
     return {
       registerActive: false,
-      username: null,
-      password: null,
+      usernameLogin: null,
+      passwordLogin: null,
       email: null,
+      usernameRegistration: null,
+      passwordRegistration: null,
       confirmPassword: null,
       //   emailLogin: "",
       //   passwordLogin: "",
       //   emailReg: "",
       //   passwordReg: "",
       emptyFields: false,
+      authenticationResponse: null,
     };
   },
   methods: {
     async doLogin() {
       if (
-        this.username === "" ||
-        this.password === "" ||
-        this.username == null ||
-        this.password == null
+        this.usernameLogin === "" ||
+        this.passwordLogin === "" ||
+        this.usernameLogin == null ||
+        this.passwordLogin == null
       ) {
         this.emptyFields = true;
       } else {
-        let valori = { username: this.username, password: this.password };
-        console.log(`valori: `);
-        console.log(valori);
-        console.log(`JSON.stringify(valori): `);
-        console.log(JSON.stringify(valori));
-        // let valoriRisposta = null;
-        // let risposta =
+        let valori = {
+          username: this.usernameLogin,
+          password: this.passwordLogin,
+        };
+
         await UserService.authenticateUser(valori)
-          // .then((valoriRisposta) => response)
-          // .then((response) => {
-          //   console.log("response dentro then");
-          //   console.log(response);
-          //   valoriRisposta = response;
-          // })
-          // .catch(function (error) {
-          //   console.log(error);
-          //   alert("errore");
-          // });
-          .then((response) => console.log(response))
-          .then((data) => {
-            console.log("Success:", data);
+          // axios
+          //   .post(
+          //     "/WPExamProject/api/user/authenticate",
+          //     JSON.stringify(valori),
+          //     {
+          //       headers: {
+          //         "Content-type": "application/json",
+          //       },
+          //     }
+          //   )
+          .then((response) => {
+            this.authenticationResponse = response;
           })
           .catch(function (error) {
             console.log(error);
-            alert("errore");
           });
-        // console.log("risposta");
-        // console.log(risposta);
-        // console.log("valoriRisposta");
-        // console.log(valoriRisposta);
-        // console.log("response.x-access-token");
-        // console.log(response["x-access-token"]);
-        // if (response.status == 200) {
-        //   this.$router.push({
-        //     path: "/dashboard",
-        //   });
-        // } else {
-        //   alert("Credendiali sbalgiate");
-        // }
-        // alert("You are now logged in");
+        // console.log(this.authenticationResponse);
+        // console.log(this.authenticationResponse.data);
+        let tokenJwt = this.authenticationResponse.data["x-access-token"];
+        localStorage.setItem("token", tokenJwt);
+
+        localStorage.setItem("id", this.authenticationResponse.data.ID);
+        localStorage.setItem(
+          "username",
+          this.authenticationResponse.data.USERNAME
+        );
+        localStorage.setItem("email", this.authenticationResponse.data.EMAIL);
+        if (this.authenticationResponse.status == 200) {
+          this.$router.push({
+            path: "/dashboard",
+          });
+        } else {
+          alert("The credentials are wrong!");
+        }
       }
     },
 
     async doRegister() {
       if (
-        this.username === "" ||
-        this.password === "" ||
+        this.usernameRegistration === "" ||
+        this.passwordRegistration === "" ||
         this.confirmPassword === "" ||
-        this.username == null ||
-        this.password == null ||
-        this.confirmPassword == null
+        this.usernameRegistration == null ||
+        this.passwordRegistration == null ||
+        this.confirmPassword == null ||
+        this.email == "" ||
+        this.email == null
       ) {
         this.emptyFields = true;
       } else if (this.password != this.confirmPassword) {
         alert("Password diverse");
       } else {
-        let valori = { username: this.username, password: this.password };
-        console.log(`valori: `);
-        console.log(valori);
-        console.log(`JSON.stringify(valori): `);
-        console.log(JSON.stringify(valori));
-        let response;
-        let valoriRisposta = null;
-        await UserService.createUser(valori);
-        // .then((response) => {
-        //   valoriRisposta = response;
-        // })
-        // .catch(function (error) {
-        //   console.log(error);
-        //   alert("errore");
-        // });
-        console.log("response");
-        console.log(response);
-        console.log("valoriRisposta");
-        console.log(valoriRisposta);
-        console.log("response.x-access-token");
-        console.log(response["x-access-token"]);
-        // localStorage.addItem('token', )
-        if (response.status == 200) {
+        let valori = {
+          email: this.email,
+          username: this.username,
+          password: this.password,
+        };
+        await UserService.createUser(valori)
+          .then((response) => {
+            this.authenticationResponse = response;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        console.log("print repsonse");
+        console.log(this.authenticationResponse);
+        console.log(this.authenticationResponse.data["x-access-token"]);
+        let tokenJwt = this.authenticationResponse.data["x-access-token"];
+        localStorage.setItem("token", tokenJwt);
+        console.log(
+          this.authenticationResponse.data.ID,
+          this.authenticationResponse.data.USERNAME
+        );
+        localStorage.setItem("id", this.authenticationResponse.data.ID);
+        localStorage.setItem(
+          "username",
+          this.authenticationResponse.data.USERNAME
+        );
+        localStorage.setItem("email", this.authenticationResponse.data.EMAIL);
+        if (this.authenticationResponse.status == 200) {
           this.$router.push({
             path: "/dashboard",
           });
         } else {
-          alert("Credendiali sbalgiate");
+          alert("Sorry! there is an error");
         }
-        alert("You are now registered");
+        // alert("You are now registered");
         // RESPONSE IF USER ALREADY EXIST --> {"message": "User already registered: samantha"}
       }
     },
