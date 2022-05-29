@@ -1,0 +1,121 @@
+.loader {
+  margin-top: 35px;
+  width: 120px;
+  height: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.loader span {
+  font-size: 22px;
+  text-transform: uppercase;
+  text-align: center;
+  margin: auto;
+  color: #155263;
+}
+.loader h3 {
+    font-size: 22px;
+    text-transform: uppercase;
+    text-align: center;
+    margin: auto;
+    color: #155263;
+  }
+.ball {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: #ffc93c;
+  animation: bounce 0.5s alternate infinite;
+}
+.ball:nth-child(2) {
+  background-color: #ff6f3c;
+  animation-delay: 0.16s;
+}
+.ball:nth-child(3) {
+  background-color: #155263;
+  animation-delay: 0.32s;
+}
+@keyframes bounce {
+  from {
+    transform: scaleX(1.25);
+  }
+  to {
+    transform: translateY(-50px) scaleX(1);
+  }
+}
+
+.titles {
+  font-family: "Parisienne", cursive;
+  color: #155263;
+  font-weight: bold;
+}
+.router-link-style {
+  color: white;
+  text-decoration: none;
+}
+
+.myNavbar {
+	background: linear-gradient(120deg, #155263, #155263);
+}
+.dark-color { 
+	background: linear-gradient(120deg, #155263, #155263);
+	/* background: #155263;  */
+	border-color: #155263;
+}
+	
+.orange-color { 
+	background: linear-gradient(120deg, #ff6f3c, #ff6f3c);
+	/* background: #ff6f3c;  */
+	color: white;
+	border-color: #ff6f3c;
+}
+
+.lightorange-color { 
+	background: linear-gradient(120deg, #ff9a3c, #ff9a3c);
+	color: white;
+	border-color: #ff9a3c;
+
+}
+
+.yellow-color { 
+	background: linear-gradient(120deg, #ffc93c, #ffc93c);
+	color: white;
+	border-color: #ffc93c;
+	/* background: #ffc93c;  */
+}
+.orange-gradient {
+	background: linear-gradient(45deg, #ff9a3c, #ff6f3c);
+	color: white;
+}
+
+p {
+  font-size: 1.25em;
+  color: #155263;
+}
+.error-marker {
+  color: red;
+}
+.alert-message {
+  color: #ff9a3c;
+}
+label {
+  font-size: 20px;
+  color: #155263;
+}
+.myMargin {
+  margin-top: 130px;
+  margin-bottom: 30px;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-20%, -20%);
+  transform: translate(-50%, -50%);
+  /* background: linear-gradient(to right, #155263 0%, #ff6f3c 70%, #ffc93c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; */
+}
