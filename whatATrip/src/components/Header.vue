@@ -5,9 +5,14 @@
     >
       <!-- gradient -->
       <div class="container">
-        <router-link to="/welcome" class="navbar-brand logo"
-          >What a trip</router-link
-        >
+        <router-link to="/welcome" class="navbar-brand logo">
+          <img
+            src="@/assets/img/whatATripSM64.png"
+            alt="What a trip logo"
+            style="width: 20%"
+          />
+          What a trip
+        </router-link>
         <!-- <a class="navbar-brand logo" href="#">What a trip</a> -->
         <button
           data-bs-toggle="collapse"

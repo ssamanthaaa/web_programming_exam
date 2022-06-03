@@ -1,5 +1,5 @@
 <template>
-  <div class="container myMargin">
+  <div class="container my-margin">
     <div class="row">
       <div class="heading col" v-if="idTrip != null">
         <h2 class="titles">Update your trip of {{ date }}</h2>
@@ -15,7 +15,9 @@
       <DrawableMap
         ref="map"
         :myTripGeoJSON="myTripGeoJSON"
+        :maxDistanceError="maxDistanceError"
         @updateCoordinates="updateTripCoordinates"
+        :key="stageNameKey"
       />
     </div>
     <hr />
@@ -76,7 +78,7 @@
             <option value="Car">Car</option>
             <option value="Motorcycle">Motorcycle</option>
             <option value="On foot">On foot</option>
-            <option value="Plane">Place</option>
+            <option value="Plane">Plane</option>
             <option value="Train">Train</option>
             <option value="Other">Other</option>
           </optgroup>
@@ -89,42 +91,68 @@
         </div>
       </div>
       <!-- <div v-if="mainStages != null && mainStages.length > 0"> -->
-      <div v-if="myTripGeoJSON != null && myTripGeoJSON.features.length > 0">
+      <div v-if="myTripGeoJSON != null && myTripGeoJSON.features.length > 1">
         <h5>Main stages</h5>
-        <div
+        <!-- <div
           class="mb-3"
           v-for="(value, index) in myTripGeoJSON.features"
           v-bind:key="index"
+        > -->
+        <div class="row">
+          <div class="col-3">
+            <label class="form-label" for="stage_name">Stage name</label>
+          </div>
+          <div class="col-3">
+            <label class="form-label" for="latitude">Latitude</label>
+          </div>
+          <div class="col-3">
+            <label class="form-label" for="longitude">Longitude</label>
+          </div>
+          <div class="col-3">
+            <label class="form-label" for="descriptionProp">Description</label>
+          </div>
+        </div>
+        <div
+          v-for="(value, index) in myTripGeoJSON.features"
+          v-bind:key="index"
+          class="mb-3"
         >
           <div v-if="value.geometry.type == 'Point'" class="row">
-            <div class="col-4">
-              <label class="form-label" for="stage_name">Stage name</label>
+            <div class="col-3">
               <input
                 class="form-control"
                 type="text"
                 v-model="value.properties.name"
+                @change="updateStage()"
               />
             </div>
-            <div class="col-4">
-              <label class="form-label" for="latitude">Latitude</label>
+            <div class="col-3">
               <input
                 class="form-control"
                 type="text"
                 v-model="value.geometry.coordinates[1]"
-                readonly
+                @change="updateStage()"
               />
             </div>
-            <div class="col-4">
-              <label class="form-label" for="longitude">Longitude</label>
+            <div class="col-3">
               <input
                 class="form-control"
                 type="text"
                 v-model="value.geometry.coordinates[0]"
-                readonly
+                @change="updateStage()"
+              />
+            </div>
+            <div class="col-3">
+              <input
+                class="form-control"
+                type="text"
+                v-model="value.properties.description"
+                @change="updateStage()"
               />
             </div>
           </div>
         </div>
+        <!-- </div> -->
       </div>
       <div class="mb-3">
         <div class="custom-control custom-checkbox checkbox-lg">
@@ -155,6 +183,14 @@
         </div>
       </div>
     </form>
+    <div v-if="maxDistanceError">
+      <p class="error-marker">
+        You can't save a trip with a marker too far from the route.
+      </p>
+    </div>
+    <div v-if="routeError">
+      <p class="error-marker">You can't save a trip without a route.</p>
+    </div>
 
     <!-- token expired notification -->
     <notifications
@@ -285,12 +321,14 @@ export default {
       longitude: null,
       stage: null,
       mainStages: [],
+      stageNameKey: 1,
 
       pathCoordinates: [],
       polylines: [],
       markers: [],
 
       myTripGeoJSON: null,
+      maxDistanceError: false,
       idUser: null,
       username: null,
       token: null,
@@ -306,6 +344,7 @@ export default {
       errorPlace: false,
       errorTransportation: false,
       errorDescription: false,
+      routeError: false,
       errorStatus: false,
       showErrorMessage: false,
 
@@ -362,22 +401,38 @@ export default {
 
       if (this.description != null && this.description.length > 300) {
         this.validation.invalid.description =
-          "You can only inset 200 characters (" + this.description.length + "/200)";
+          "You can only inset 200 characters (" +
+          this.description.length +
+          "/200)";
         this.errorDescription = true;
       } else {
         this.errorDescription = false;
         this.validation.valid.description = "Description is fine";
       }
 
+      console.log(this.myTripGeoJSON);
+
       this.$forceUpdate();
       if (
         this.errorDate ||
         this.errorPlace ||
         this.errorTransportation ||
-        this.errorDescription
+        this.errorDescription ||
+        this.maxDistanceError ||
+        this.checkRoute()
       ) {
         return false;
       } else {
+        return true;
+      }
+    },
+
+    checkRoute: function () {
+      if (this.myTripGeoJSON.features.length > 0) {
+        this.routeError = false;
+        return false;
+      } else {
+        this.routeError = true;
         return true;
       }
     },
@@ -402,6 +457,7 @@ export default {
         this.showErrorNotification();
         setTimeout(() => {
           UserService.logout();
+          this.redirectLogout();
         }, 2000);
       } else {
         if (deleteResponse.status == 200) {
@@ -460,6 +516,7 @@ export default {
       let trip;
       let okResponse;
       let errorStatus = 0;
+      console.log(`maxDistance ${this.maxDistanceError}`);
       if (this.checkInformations()) {
         console.log(this.checkInformations());
         if (this.idTrip == null) {
@@ -486,8 +543,8 @@ export default {
             this.showErrorNotification();
             setTimeout(() => {
               UserService.logout();
+              this.redirectLogout();
             }, 2000);
-            this.redirectLogout();
           } else {
             if (okResponse.status == 200) {
               //trip creato
@@ -527,8 +584,8 @@ export default {
             this.showErrorNotification();
             setTimeout(() => {
               UserService.logout();
+              this.redirectLogout();
             }, 2000);
-            this.redirectLogout();
           } else {
             if (okResponse.status == 200) {
               this.showSuccessTrip = true;
@@ -566,7 +623,6 @@ export default {
         path: "/login",
       });
     },
-
     getMainStagesAndPathCoordinate() {
       this.mainStages = [];
       this.pathCoordinates = [];
@@ -583,8 +639,19 @@ export default {
       }
     },
 
-    updateTripCoordinates(value) {
+    updateStage() {
+      // let geojson = JSON.stringify(this.myTripGeoJSON, null, 4);
+      // this.geoJsonText = geojson.toString();
+      this.stageNameKey += 1;
+      console.log(`stageNameKey: ${this.stageNameKey}`);
+    },
+
+    updateTripCoordinates(value, maxDistanceError) {
       this.myTripGeoJSON = value;
+      this.maxDistanceError = maxDistanceError;
+      console.log(`in updateTRIP, maxDistanceError: ${this.maxDistanceError}`);
+      // let geojson = JSON.stringify(this.myTripGeoJSON, null, 4);
+      // this.geoJsonText = geojson.toString();
       this.getMainStagesAndPathCoordinate();
     },
   },

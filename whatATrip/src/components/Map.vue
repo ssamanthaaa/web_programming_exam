@@ -41,7 +41,7 @@ import { latLngBounds } from "leaflet";
 
 export default {
   props: {
-    pathJson: Object,
+    tripList: Object,
   },
   name: "map-component",
   components: {
@@ -64,6 +64,7 @@ export default {
         { lat: 51.476483373501964, lng: -0.14668464136775586 },
         { lat: 51.52948330894063, lng: -0.019140238291583955 }
       ),
+      j: null,
     };
   },
   methods: {
@@ -74,24 +75,38 @@ export default {
     loadMap() {
       this.map = this.$refs.map.mapObject;
       let drawnItems = new L.FeatureGroup().addTo(this.map);
+      let $this = this;
       function onEachFeature(feature, layer) {
+        console.log($this.j);
         drawnItems.addLayer(layer);
         layer.bindPopup(
+          // "<p>" +
+          //   feature.properties.name +
+          //   " (" +
+          //   feature.geometry.coordinates[1] +
+          //   ", " +
+          //   feature.geometry.coordinates[0] +
+          //   ")</p>"
           "<p>" +
             feature.properties.name +
             " (" +
             feature.geometry.coordinates[1] +
             ", " +
             feature.geometry.coordinates[0] +
-            ")</p>"
+            ")</p><hr/><p style='font-size:14px'>You were here on " +
+            $this.tripList[$this.j].DATE +
+            ", and the trasportation type is: " +
+            $this.tripList[$this.j].TRANSPORTATION +
+            "</p>"
         );
       }
       // console.log("carico pathjson");
       // console.log(this.pathJson);
-      if (this.pathJson.length > 0) {
+      if (this.tripList.length > 0) {
         // let mygeojson =
-        for (let i = 0; i < this.pathJson.length; ++i) {
-          let featureJson = L.geoJson(this.pathJson[i], {
+        for (let i = 0; i < this.tripList.length; ++i) {
+          this.j = i;
+          let featureJson = L.geoJson(this.tripList[i].GEOJSON, {
             onEachFeature: onEachFeature,
             color: "red",
           }).addTo(this.map);
@@ -101,6 +116,7 @@ export default {
             this.zoom = 6;
           }
         }
+        this.zoom = 6;
       }
     },
 

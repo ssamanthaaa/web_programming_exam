@@ -15,11 +15,11 @@
               class="card"
               v-bind:class="{ error: emptyFields }"
             >
-              <h1>What A Trip</h1>
               <div class="illustration">
+                <h1>What A Trip</h1>
                 <!-- <Icon icon="carbon:locked" style="" /> -->
                 <img
-                  src="@/assets/img/whatATripSM.png"
+                  src="@/assets/img/whatATrip.png"
                   class="img-fluid"
                   alt="What a trip logo"
                 />
@@ -107,11 +107,11 @@
               </form>
             </div>
             <div v-else class="card" v-bind:class="{ error: emptyFields }">
-              <h1>What A Trip</h1>
               <div class="illustration">
+                <h1>What A Trip</h1>
                 <!-- <Icon icon="carbon:locked" /> -->
                 <img
-                  src="@/assets/img/whatATripSM.png"
+                  src="@/assets/img/whatATrip.png"
                   class="img-fluid"
                   alt="What a trip logo"
                 />
@@ -561,15 +561,19 @@ export default {
 </script>
 <style scoped>
 .illustration {
+  margin-top: 10%;
   text-align: center;
-  padding: 15px 0 20px;
+  padding: 0 0 15px;
   font-size: 100px;
   color: #ff6f3c;
 }
 
 h1 {
   color: #ff6f3c;
-  font-family: "Parisienne", cursive;
+  /* font-family: "Parisienne", cursive; */
+  /* font-family: "Indie Flower", cursive; */
+  font-family: "Shadows Into Light", cursive;
+  font-weight: bold;
 }
 h2 {
   color: #ff9a3c;
@@ -587,8 +591,9 @@ p {
 }
 
 .card {
-  padding: 20px;
+  padding: 10px;
   box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  margin-top: 20%;
 }
 
 .form-group {
@@ -598,18 +603,14 @@ p {
 .myLoginPage {
   align-items: center;
   display: flex;
-  height: 100vh;
+  height: calc(100% - 100px);
+  /* 100vh; */
 }
 
 .error {
   animation-name: errorShake;
   animation-duration: 0.3s;
 }
-
-/* inpt:invalid {
-  animation: errorShake 300ms;
-  box-shadow: 0 0 0.5em red;
-} */
 
 @keyframes errorShake {
   25% {
@@ -621,21 +622,6 @@ p {
   75% {
     transform: translatex(4px);
   }
-  /* 0% {
-    transform: translateX(-25px);
-  }
-  25% {
-    transform: translateX(25px);
-  }
-  50% {
-    transform: translateX(-25px);
-  }
-  75% {
-    transform: translateX(25px);
-  }
-  100% {
-    transform: translateX(0);
-  } */
 }
 
 .invalid-credentials {

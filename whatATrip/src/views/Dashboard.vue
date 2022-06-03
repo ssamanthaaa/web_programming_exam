@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div>
     <div class="container marginTop">
       <!-- <div > -->
       <h1 class="titles">My trips</h1>
@@ -30,15 +30,14 @@
       <!-- <h3>Hi {{ username }}!</h3> -->
       <div class="row">
         <div class="col map">
-          <Map v-if="dataLoaded" :pathJson="pathJson" :key="pathJsonKey" />
+          <Map v-if="dataLoaded" :tripList="tripList" :key="pathJsonKey" />
         </div>
         <!-- <div class="col"><ModificableMap/></div> -->
       </div>
 
-      <div class="row">
-        <!-- <div class="heading"> -->
+      <div class="table-responsive">
         <!-- </div> -->
-        <table class="table tablesorter">
+        <table class="table table-responsive-sm table-responsive-md">
           <thead>
             <tr>
               <th></th>
@@ -101,9 +100,36 @@
             </tr>
           </tbody>
         </table>
+        <!-- </div> -->
       </div>
-      <!-- </div> -->
     </div>
+    <!--  MODAL sesssion expired -->
+    <b-modal v-model="showExpiredError" size="md">
+      <template #modal-header="{ close }">
+        <b-button size="sm" class="dark-color" @click="close()">X</b-button>
+      </template>
+      <template>
+        <h3 style="color: #ff6f3c; text-align: center; margin-top: 15px">
+          Your session is expired.
+        </h3>
+        <p style="text-align: center">
+          You will be redirected to the home page in a few seconds.
+        </p>
+        <div class="row justify-content-center">
+          <div class="loader" v-if="showLoader">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <span>Redirecting...</span>
+          </div>
+        </div>
+      </template>
+      <template #modal-footer="{ ok }">
+        <span style="padding-right: 40px"
+          ><b-button class="orange-color" @click="ok()">OK</b-button></span
+        >
+      </template>
+    </b-modal>
     <!-- <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <!-- <Footer /> -->
@@ -135,6 +161,8 @@ export default {
       pathJson: [],
       dataLoaded: false,
       pathJsonKey: 1,
+      showExpiredError: false,
+      showLoader: true,
       currentSort: "DATE",
       currentSortDir: "desc",
     };
@@ -153,37 +181,27 @@ export default {
     filterByDates: async function () {
       let fromDate = this.selectedDate[0];
       let toDate = this.selectedDate[1];
-      // console.log(`selectedDate: ${this.selectedDate}`);
       if (fromDate == null && toDate == null) {
         await this.getTrips();
       } else {
         await this.getTrips();
-        // console.log(`fromDate = ${fromDate} - toDate ${toDate}`);
         let dateFromArray = this.tripList.filter(function (el) {
           return el.DATE >= fromDate;
         });
-        // console.log(dateFromArray);
         let dateToArray = dateFromArray.filter(function (el) {
           return el.DATE <= toDate;
         });
-        // console.log(dateToArray);
         this.dataLoaded = false;
         this.tripList = dateToArray;
         this.dataLoaded = true;
-        this.pathJson = [];
-        for (let i = 0; i < this.tripList.length; ++i) {
-          if (this.tripList[i].GEOJSON != null) {
-            // this.tripList[i].GEOJSON = JSON.parse(this.tripList[i].GEOJSON);
-            // console.log(this.tripList[i].GEOJSON);
-            // console.log("parse json:");
-            this.pathJson.push(this.tripList[i].GEOJSON);
-          }
-        }
+        // this.pathJson = [];
+        // for (let i = 0; i < this.tripList.length; ++i) {
+        // if (this.tripList[i].GEOJSON != null) {
+        // this.pathJson.push(this.tripList[i]);
+        // }
+        // }
         this.$forceUpdate();
         this.pathJsonKey += 1;
-        // console.log(`pathJsonKey update: ${this.pathJsonKey}`);
-        // console.log("pathJson after being filtered");
-        // console.log(this.pathJson);
       }
     },
 
@@ -192,46 +210,48 @@ export default {
     // },
 
     getTrips: async function () {
+      let errorStatus = 0;
+      let status;
       await TripService.getAllTrips(this.idUser, this.token)
         .then((response) => {
+          console.log(response);
           this.tripList = response.data;
+          status = response.status;
+          // console.log(this.tripList);
+          // console.log(status);
         })
         .catch(function (error) {
+          errorStatus = error.response.status;
           console.log(error);
-          if (error == 401) {
-            console.log(error.message);
-            UserService.logout();
-            // localStorage.removeItem("token");
-            // localStorage.removeItem("id");
-            // localStorage.removeItem("username");
-            // localStorage.removeItem("email");
-            // this.$router.push({
-            //   path: "/",
-            // });
-          }
         });
-      console.log(this.tripList);
-      if (this.tripList != null) {
-        for (let i = 0; i < this.tripList.length; ++i) {
-          // console.log(this.tripList[i]);
-          if (this.tripList[i].GEOJSON != null) {
-            this.tripList[i].GEOJSON = JSON.parse(this.tripList[i].GEOJSON);
-            // console.log(this.tripList[i].GEOJSON);
-            // console.log("parse json:");
-            this.pathJson.push(this.tripList[i].GEOJSON);
+      // console.log(`errorStatus: ${errorStatus}`);
+      if (errorStatus != 0) {
+        this.showExpiredError = true;
+        setTimeout(() => {
+          UserService.logout();
+          this.redirectLogout();
+        }, 2000);
+      } else {
+        if (status === 200) {
+          console.log(this.tripList);
+          if (this.tripList != null) {
+            for (let i = 0; i < this.tripList.length; ++i) {
+              if (this.tripList[i].GEOJSON != null) {
+                this.tripList[i].GEOJSON = JSON.parse(this.tripList[i].GEOJSON);
+                // this.pathJson.push(this.tripList[i]);
+              }
+            }
           }
         }
       }
-      // console.log("stampo geojson.features");
-      // for (let i = 0; i < this.tripList[0].GEOJSON.features.length; ++i) {
-      //   let features = this.tripList[0].GEOJSON.features[i];
-      //   console.log(features.properties.name);
-      // }
       this.pathJsonKey += 1;
-      // console.log(`pathJsonKey update: ${this.pathJsonKey}`);
-      // console.log("stampo pathJson");
-      // console.log(this.pathJson);
       this.dataLoaded = true;
+    },
+
+    redirectLogout: function () {
+      this.$router.push({
+        path: "/login",
+      });
     },
 
     sort: function (s) {
@@ -244,7 +264,8 @@ export default {
   },
   computed: {
     sortedTrips: function () {
-      if (this.tripList != undefined) {
+      // console.log(this.tripList);
+      if (this.tripList != undefined && this.tripList != null) {
         let tripListToSort = this.tripList;
         return tripListToSort.sort((a, b) => {
           let modifier = 1;
@@ -270,7 +291,7 @@ export default {
   margin-bottom: 20px;
 }
 .marginTop {
-  margin-top: 100px;
+  margin-top: 120px;
 }
 h1,
 h4 {

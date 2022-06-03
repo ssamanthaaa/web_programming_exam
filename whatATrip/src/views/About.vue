@@ -1,51 +1,40 @@
 <template>
-  <div class="myMargin" id="app">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col">
-          <img
-            src="@/assets/img/logo.png"
-            alt="vue.js logo"
-            style="width: 40%"
-          />
-        </div>
-        <div class="col">
-          <img
-            src="@/assets/img/eclipse.png"
-            alt="Eclipse logo"
-            style="width: 53%"
-          />
-        </div>
-        <div class="col">
-          <img
-            src="@/assets/img/tomcatLogo.png"
-            alt="tomcat logo"
-            style="width: 40%"
-          />
-        </div>
-        <div class="col">
-          <img
-            src="@/assets/img/mysqlLogo.png"
-            alt="mySQL logo"
-            style="width: 60%"
-          />
-        </div>
-        <div class="col">
-          <img
-            src="@/assets/img/js.png"
-            alt="Javascript logo"
-            style="width: 40%"
-          />
-        </div>
-        <div class="col">
-          <img
-            src="@/assets/img/vsCodeLogo.png"
-            alt="vs code logo"
-            style="width: 40%"
-          />
-        </div>
+  <div class="container my-margin" id="app">
+    <div class="grid">
+      <div>
+        <img src="@/assets/img/vuejs.png" class="img-vue" alt="vue.js logo" />
       </div>
-      <div class="row justify-content-center"></div>
+      <div>
+        <img
+          src="@/assets/img/eclipse.png"
+          class="img-eclipse"
+          alt="Eclipse logo"
+        />
+      </div>
+      <div>
+        <img
+          src="@/assets/img/tomcatLogo.png"
+          class="img-tomcat"
+          alt="tomcat logo"
+        />
+      </div>
+      <div>
+        <img
+          src="@/assets/img/mysqlLogo.png"
+          class="img-mysql"
+          alt="mySQL logo"
+        />
+      </div>
+      <div>
+        <img src="@/assets/img/js.png" class="img-js" alt="Javascript logo" />
+      </div>
+      <div>
+        <img
+          src="@/assets/img/vscodeLogo.png"
+          class="img-vscode"
+          alt="vs code logo"
+        />
+      </div>
     </div>
   </div>
   <!-- <div class="center">
@@ -88,5 +77,39 @@ export default {
   /* background: linear-gradient(to right, #155263 0%, #ff6f3c 70%, #ffc93c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent; */
+}
+
+.center-content {
+  justify-content: center;
+  padding: 10% 10%;
+}
+.grid {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  grid-auto-rows: 1fr;
+}
+
+.grid::before {
+  content: "";
+  width: 0;
+  padding-bottom: 100%;
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}
+
+.grid > *:first-child {
+  grid-row: 1 / 1;
+  grid-column: 1 / 1;
+}
+
+/* Just to make the grid visible */
+
+.grid > * {
+  /* background: rgba(0, 0, 0, 0.1); */
+  border: 2px white solid;
+}
+img {
+  max-width: 100%;
 }
 </style>
