@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE Configuration>
+
+<!--<Configuration>
+	<dbType>SQLite</dbType>
+	<dbName>TripDBExam</dbName>
+	<dbPath>jdbc:sqlite:TripDBExam</dbPath>
+</Configuration>-->
+
+<Configuration>
+	<dbType>SQL</dbType>
+	<dbName>TRIPS</dbName>
+	<dbPath>jdbc:mysql://localhost:3306/TRIPS</dbPath>
+	<dbPort>3306</dbPort>
+	<dbUser>root</dbUser>
+	<dbPassword>Cioccolato123</dbPassword>
+</Configuration>
+<!-- "jdbc:mysql://localhost:3306/TRIPS","root","Cioccolato123" -->
+
+<!-- <Configuration>
+	<dbType>OrientDB</dbType>
+	<dbName>testdb</dbName>
+	<dbPath>remote:localhost/testdb</dbPath>
+	<dbHost></dbHost>
+	<dbPort></dbPort>
+	<dbUser>admin</dbUser>
+	<dbPassword>admin</dbPassword>
+	<dbPool>10</dbPool>
+</Configuration> -->

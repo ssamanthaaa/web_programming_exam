@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+         
+	<display-name>Vue.js Exam Web Application</display-name>
+	
+	<welcome-file-list>
+    	<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	
+	<servlet>
+		<servlet-name>Jersey REST Service Vue.js and mysql</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+		  <param-name>jersey.config.server.provider.packages</param-name>
+		  <param-value>it.units</param-value>
+		</init-param>
+		<init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>it.units.rest.restapi.RestApplicationConfig</param-value>
+        </init-param>
+	  <load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	 <error-page> 
+	    <error-code>404</error-code>  
+	    <location>/index.html</location>  
+	  </error-page> 
+  
+	<servlet-mapping>
+	  <servlet-name>Jersey REST Service Vue.js and mysql</servlet-name>
+	  <url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+	
+	<security-constraint>
+    <web-resource-collection>
+      <web-resource-name>WhatATrip</web-resource-name>
+      <url-pattern>/WhatATrip/dashboard</url-pattern>
+      <url-pattern>/WhatATrip/update-trip</url-pattern>
+      <url-pattern>/WhatATrip/welcome</url-pattern>
+      <url-pattern>/WhatATrip/about</url-pattern>
+ 
+    </web-resource-collection>
+    <!-- <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>-->
+    </security-constraint>
+</web-app>
