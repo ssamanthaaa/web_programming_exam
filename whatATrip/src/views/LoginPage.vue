@@ -302,6 +302,7 @@ export default {
   },
   methods: {
     async doLogin() {
+      this.clearValidationRegistration();
       if (!this.validateLogin()) {
         this.emptyFields = true;
       } else {
@@ -342,6 +343,8 @@ export default {
               "email",
               this.authenticationResponse.data.EMAIL
             );
+            localStorage.setItem("role", this.authenticationResponse.data.ROLE);
+            localStorage.setItem("isLogged", true);
 
             this.$router.push({
               path: "/welcome",
@@ -353,8 +356,26 @@ export default {
         }
       }
     },
+    clearValidationLogin() {
+      this.validation.valid.usernameLogin = "";
+      this.validation.invalid.usernameLogin = "";
+      this.validation.valid.passwordLogin = "";
+      this.validation.invalid.passwordLogin = "";
+    },
+
+    clearValidationRegistration() {
+      this.validation.valid.usernameRegistration = "";
+      this.validation.invalid.usernameRegistration = "";
+      this.validation.valid.passwordRegistration = "";
+      this.validation.invalid.passwordRegistration = "";
+      this.validation.valid.confirmPassword = "";
+      this.validation.invalid.confirmPassword = "";
+      this.validation.valid.email = "";
+      this.validation.invalid.email = "";
+    },
 
     async doRegister() {
+      this.clearValidationLogin();
       // this.validateRegistration();
       let errorStatus;
       if (!this.validateRegistration()) {
@@ -394,7 +415,8 @@ export default {
               "email",
               this.authenticationResponse.data.EMAIL
             );
-
+            localStorage.setItem("isLogged", true);
+            localStorage.setItem("role", this.authenticationResponse.data.ROLE);
             this.$router.push({
               path: "/welcome",
             });
@@ -530,6 +552,7 @@ export default {
     credentialsExisting: function (status) {
       if (status == 404 || status == 401) {
         //not availbale server
+        this.showCredentialsExisting = false;
         this.showErrorMessage = true;
         this.validation.valid.usernameRegistration = "";
         this.validation.invalid.usernameRegistration = " ";
@@ -539,8 +562,9 @@ export default {
         this.validation.invalid.email = " ";
         this.validation.valid.confirmPassword = "";
         this.validation.invalid.confirmPassword = " ";
-        this.errorMessage = "Sorry! An error occured.";
+        this.errorMessage = "Sorry! An error occured. Try another email";
       } else {
+        this.errorMessage = "";
         this.showCredentialsExisting = true;
         if (status == 409) {
           this.validation.valid.usernameRegistration = "";

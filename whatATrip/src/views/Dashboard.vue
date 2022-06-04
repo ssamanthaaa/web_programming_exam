@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <div class="container marginTop">
+  <div id="app">
+    <div class="container my-margin">
       <!-- <div > -->
       <h1 class="titles">My trips</h1>
       <div class="row justify-content-between">
-        <div class="col-4">
+        <div class="col-sm-4">
           <h4>Filter trips by date</h4>
           <date-picker
             v-model="selectedDate"
@@ -14,13 +14,14 @@
             range
             placeholder="Select date range"
             @change="filterByDates()"
+            class="width"
           ></date-picker>
         </div>
-        <div class="col-4">
+        <div class="col-sm-4">
           <router-link
             to="update-trip"
             style="color: white; text-decoration: none"
-            ><button class="btn orange-color" style="float: right">
+            ><button class="btn orange-color btn-lg w-100" style="float: right">
               Add trip
             </button>
           </router-link>
@@ -90,10 +91,11 @@
                     v-bind:key="index"
                   >
                     <span v-if="val.geometry.type === 'Point'">
-                      {{ val.properties.name }} ({{
-                        val.geometry.coordinates[1]
-                      }}, {{ val.geometry.coordinates[0] }})
+                      {{ val.properties.name }}
                     </span>
+                    <!--  ({{
+                        val.geometry.coordinates[1]
+                      }}, {{ val.geometry.coordinates[0] }}) -->
                   </li>
                 </ul>
               </td>
@@ -290,11 +292,22 @@ export default {
   margin-top: 20px;
   margin-bottom: 20px;
 }
-.marginTop {
+/* .marginTop {
   margin-top: 120px;
-}
+} */
 h1,
 h4 {
   color: #155263;
+}
+/* @media only screen and (max-width: 600px) {
+  table {
+    width: 50%;
+  }
+} */
+div.col-sm-4 {
+  margin-top: 10px;
+}
+.width {
+  width: 100%;
 }
 </style>

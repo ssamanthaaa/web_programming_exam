@@ -1,46 +1,66 @@
 <template>
   <div class="container my-margin" id="app">
-    <div class="grid">
-      <div>
-        <img src="@/assets/img/vuejs.png" class="img-vue" alt="vue.js logo" />
-      </div>
-      <div>
-        <img
-          src="@/assets/img/eclipse.png"
-          class="img-eclipse"
-          alt="Eclipse logo"
-        />
-      </div>
-      <div>
-        <img
-          src="@/assets/img/tomcatLogo.png"
-          class="img-tomcat"
-          alt="tomcat logo"
-        />
-      </div>
-      <div>
-        <img
-          src="@/assets/img/mysqlLogo.png"
-          class="img-mysql"
-          alt="mySQL logo"
-        />
-      </div>
-      <div>
-        <img src="@/assets/img/js.png" class="img-js" alt="Javascript logo" />
-      </div>
-      <div>
-        <img
-          src="@/assets/img/vscodeLogo.png"
-          class="img-vscode"
-          alt="vs code logo"
-        />
-      </div>
-    </div>
+    <section>
+      <h2 class="titles">Specification of the project and technologies used</h2>
+      <!-- <p> -->
+      The goal of this project was to realize a web application where a
+      registered user can save information about his trips. The users will have
+      to login into the platform and then he will be able to see all his trips
+      and create more of them. Each trip has a date, a transportation type, a
+      path, a small description of the trip that is not mandatory, and a list of
+      stages that can also have a name and a small description. On the home
+      page, the user can look at all his trips, but also he can filter them
+      based on a single date or a range of dates. A trip can be modified or
+      deleted at any moment. A new user can create an account and in a few
+      seconds he will be able to create his first trip. The technologies used to
+      realize this web application are:
+      <ul>
+        <li>Apache Tomcat</li>
+        <li>Eclipse for the development of the bakend part</li>
+        <li>Visual Studio Code for the development of the frontend part</li>
+        <li>MySQL</li>
+        <li>Axios</li>
+        <li>Vue.js framework</li>
+        <li>
+          Leaflet map, in particular
+          <a href="https://github.com/geoman-io/leaflet-geoman" target="_blank"
+            >leaflet-geoman plugin</a
+          >
+        </li>
+      </ul>
+      <!-- To deliver the project docker has been used. -->
+      <!-- </p> -->
+    </section>
+    <section>
+      <h2 class="titles">Future updates ideas</h2>
+      Some possible future updates ideas are:
+      <ul>
+        <li>add the possibility to share a trip with your trip buddy</li>
+        <li>
+          add other types of filters, for example the possibility to filter by
+          the type of transpotation or on the trip's buddies that did the trip
+          with the user
+        </li>
+        <li>
+          add the possibility to add also a picture for the whole trip or one in
+          the main stages
+        </li>
+        <li>
+          add the geolocalization in order to save your trip instantanely as you
+          are moving
+        </li>
+        <li>
+          add the possibility to set starting point and arrival point and get
+          the shortest path
+        </li>
+        <li>
+          add the possibility to choose for each trip the marker/path color or a
+          marker image
+        </li>
+        <li>create a mobile app</li>
+      </ul>
+    </section>
   </div>
-  <!-- <div class="center">
-    <h1 class="titles">Technologies used</h1>
-    <h1 class="titles">Future improvements</h1>
-  </div> -->
 </template>
 
 <script>
@@ -74,42 +94,18 @@ export default {
   left: 50%;
   -ms-transform: translate(-20%, -20%);
   transform: translate(-50%, -50%);
-  /* background: linear-gradient(to right, #155263 0%, #ff6f3c 70%, #ffc93c 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent; */
 }
 
 .center-content {
   justify-content: center;
   padding: 10% 10%;
 }
-.grid {
-  display: grid;
-  justify-content: center;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  grid-auto-rows: 1fr;
-}
 
-.grid::before {
-  content: "";
-  width: 0;
-  padding-bottom: 100%;
-  grid-row: 1 / 1;
-  grid-column: 1 / 1;
+section {
+  text-align: left;
+  margin-top: 10px;
 }
-
-.grid > *:first-child {
-  grid-row: 1 / 1;
-  grid-column: 1 / 1;
-}
-
-/* Just to make the grid visible */
-
-.grid > * {
-  /* background: rgba(0, 0, 0, 0.1); */
-  border: 2px white solid;
-}
-img {
-  max-width: 100%;
+section h2 {
+  color: #ff6f3c;
 }
 </style>

@@ -1,32 +1,45 @@
 <template>
-  <div id="app" class="container">
-    <div class="center">
+  <div class="container my-margin" id="app">
+    <!-- my-margin -->
+    <section>
+      <!-- <section> -->
       <!-- <div > -->
       <div class="row justify-content-center">
         <h1 class="titles">
           Welcome, <span>{{ username }}</span
           >!
         </h1>
-        <img
-          src="@/assets/img/whatATrip.png"
-          class="img-fluid"
-          alt="What a trip logo"
-          style="width: 35%"
-        />
+        <div class="container-md container-sm">
+          <img src="@/assets/img/whatATrip256.png" alt="What a trip logo" />
+        </div>
       </div>
-      <div class="row">
-        <div class="col-6">
+      <div class="row justify-content-center" style="padding-top: 5%">
+        <div class="col-sm">
           <router-link to="dashboard" class="router-link-style"
-            ><button class="btn orange-color btn-lg w-100">Your trips</button>
+            ><button class="btn orange-color w-100">Your trips</button>
           </router-link>
         </div>
-        <div class="col-6">
+        <div class="col-sm">
           <router-link to="update-trip" class="router-link-style"
-            ><button class="btn orange-color btn-lg w-100">Add trip</button>
+            ><button class="btn orange-color w-100">Add trip</button>
           </router-link>
         </div>
       </div>
-    </div>
+      <div class="row justify-content-center">
+        <div class="col-sm">
+          <a
+            href="https://www.youtube.com/watch?v=dighxafYyqo"
+            target="_blank"
+            class="router-link-style"
+            ><button class="btn orange-color w-100">See Tutorial</button>
+          </a>
+        </div>
+      </div>
+      <!-- </section> -->
+      <!-- <section>
+        <h2 class="titles">Tutorial</h2>
+      </section> -->
+    </section>
     <!--  MODAL sesssion expired -->
     <b-modal v-model="showExpiredError" size="md">
       <template #modal-header="{ close }">
@@ -120,10 +133,26 @@ export default {
 
 <style scoped>
 h1 {
-  font-size: 4.5rem;
+  font-size: 3.5rem;
 }
 
 span {
   text-transform: capitalize;
 }
+
+div.col-sm {
+  margin-top: 10px;
+}
+.my-logo {
+  /* max-height: 100px; */
+  max-width: 50%;
+}
+
+.contaier-sm {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+/* .my-margin {
+  padding-bottom: 10%;
+} */
 </style>

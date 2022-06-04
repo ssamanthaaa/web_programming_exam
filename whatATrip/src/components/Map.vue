@@ -6,7 +6,7 @@
             </div> -->
     <div class="constainer justify-content-center">
       <l-map
-        style="height: 600px; width: 100%"
+        style="height: 470px; width: 100%"
         :zoom="zoom"
         :center="center"
         ref="map"
@@ -77,28 +77,37 @@ export default {
       let drawnItems = new L.FeatureGroup().addTo(this.map);
       let $this = this;
       function onEachFeature(feature, layer) {
-        console.log($this.j);
         drawnItems.addLayer(layer);
-        layer.bindPopup(
-          // "<p>" +
-          //   feature.properties.name +
-          //   " (" +
-          //   feature.geometry.coordinates[1] +
-          //   ", " +
-          //   feature.geometry.coordinates[0] +
-          //   ")</p>"
-          "<p>" +
-            feature.properties.name +
-            " (" +
-            feature.geometry.coordinates[1] +
-            ", " +
-            feature.geometry.coordinates[0] +
-            ")</p><hr/><p style='font-size:14px'>You were here on " +
-            $this.tripList[$this.j].DATE +
-            ", and the trasportation type is: " +
-            $this.tripList[$this.j].TRANSPORTATION +
-            "</p>"
-        );
+        if (
+          feature.properties.description == undefined ||
+          feature.properties.description == null
+        ) {
+          layer.bindPopup(
+            "<p>" +
+              feature.properties.name +
+              " (" +
+              feature.geometry.coordinates[1] +
+              ", " +
+              feature.geometry.coordinates[0] +
+              ")</p><hr/><p style='font-size:14px'>You were here on " +
+              $this.tripList[$this.j].DATE +
+              ", and the trasportation type is: " +
+              $this.tripList[$this.j].TRANSPORTATION +
+              "</p>"
+          );
+        } else {
+          layer.bindPopup(
+            "<p>" +
+              feature.properties.name +
+              " (" +
+              feature.geometry.coordinates[1] +
+              ", " +
+              feature.geometry.coordinates[0] +
+              ")</p><hr/><p style='font-size:14px'>" +
+              feature.properties.description +
+              "</p>"
+          );
+        }
       }
       // console.log("carico pathjson");
       // console.log(this.pathJson);
@@ -106,16 +115,18 @@ export default {
         // let mygeojson =
         for (let i = 0; i < this.tripList.length; ++i) {
           this.j = i;
-          let featureJson = L.geoJson(this.tripList[i].GEOJSON, {
+          // let featureJson =
+          L.geoJson(this.tripList[i].GEOJSON, {
             onEachFeature: onEachFeature,
             color: "red",
           }).addTo(this.map);
-          if (i == 0) {
-            console.log(featureJson.getBounds());
-            this.map.fitBounds(featureJson.getBounds());
-            this.zoom = 6;
-          }
+          // if (i == 0) {
+          //   console.log(featureJson.getBounds());
+          //   this.map.fitBounds(featureJson.getBounds());
+          //   this.zoom = 6;
+          // }
         }
+        this.map.fitBounds(drawnItems.getBounds());
         this.zoom = 6;
       }
     },

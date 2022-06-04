@@ -110,13 +110,13 @@ label {
   color: #155263;
 }
 .my-margin {
-  margin-top: 130px;
+  margin-top: 120px;
   margin-bottom: 30px;
 }
 
 .center {
   margin: 0;
-  position: absolute;
+  position: relative;
   top: 50%;
   left: 50%;
   -ms-transform: translate(-20%, -20%);
@@ -124,4 +124,13 @@ label {
   /* background: linear-gradient(to right, #155263 0%, #ff6f3c 70%, #ffc93c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent; */
+}
+a:link {
+  color: #155263;
+}
+a:visited {
+  color: #ff9a3c;
+}
+a:hover {
+  color: #ff6f3c;
 }

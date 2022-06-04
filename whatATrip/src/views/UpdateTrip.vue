@@ -1,15 +1,19 @@
 <template>
-  <div class="container my-margin">
-    <div class="row">
+  <div class="container my-margin" id="app">
+    <!-- <div class="row justify-content-center">
       <div class="heading col" v-if="idTrip != null">
-        <h2 class="titles">Update your trip of {{ date }}</h2>
       </div>
       <div class="heading col" v-else>
-        <h2 class="titles">Add a new trip</h2>
       </div>
-    </div>
-    <div class="row">
-      <p>First draw your route and then add your stages</p>
+    </div> -->
+    <div class="row justify-content-center">
+      <div class="col">
+        <h2 v-if="idTrip != null" class="titles">
+          Update your trip of {{ date }}
+        </h2>
+        <h2 v-else class="titles">Add a new trip</h2>
+        <p>First draw your route and then add your stages</p>
+      </div>
     </div>
     <div class="row justify-content-center" v-if="dataLoaded">
       <DrawableMap
@@ -98,27 +102,24 @@
           v-for="(value, index) in myTripGeoJSON.features"
           v-bind:key="index"
         > -->
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-3">
-            <label class="form-label" for="stage_name">Stage name</label>
           </div>
           <div class="col-3">
-            <label class="form-label" for="latitude">Latitude</label>
           </div>
           <div class="col-3">
-            <label class="form-label" for="longitude">Longitude</label>
           </div>
           <div class="col-3">
-            <label class="form-label" for="descriptionProp">Description</label>
           </div>
-        </div>
+        </div> -->
         <div
           v-for="(value, index) in myTripGeoJSON.features"
           v-bind:key="index"
           class="mb-3"
         >
           <div v-if="value.geometry.type == 'Point'" class="row">
-            <div class="col-3">
+            <div class="col-sm">
+              <label class="form-label" for="stage_name">Stage name</label>
               <input
                 class="form-control"
                 type="text"
@@ -126,7 +127,8 @@
                 @change="updateStage()"
               />
             </div>
-            <div class="col-3">
+            <div class="col-sm">
+              <label class="form-label" for="latitude">Latitude</label>
               <input
                 class="form-control"
                 type="text"
@@ -134,7 +136,8 @@
                 @change="updateStage()"
               />
             </div>
-            <div class="col-3">
+            <div class="col-sm">
+              <label class="form-label" for="longitude">Longitude</label>
               <input
                 class="form-control"
                 type="text"
@@ -142,7 +145,10 @@
                 @change="updateStage()"
               />
             </div>
-            <div class="col-3">
+            <div class="col-sm">
+              <label class="form-label" for="descriptionProp"
+                >Description</label
+              >
               <input
                 class="form-control"
                 type="text"
@@ -150,6 +156,7 @@
                 @change="updateStage()"
               />
             </div>
+            <hr />
           </div>
         </div>
         <!-- </div> -->
@@ -237,11 +244,11 @@
         <h3 style="color: #ff6f3c; text-align: center; margin-top: 15px">
           Are you sure you want to delete the trip?
         </h3>
-        <p style="text-align: center">
-          You will be redirected to the home page in a few seconds.
-        </p>
-        <div class="row justify-content-center">
-          <div class="loader" v-if="showLoader">
+        <div class="row justify-content-center" v-if="showLoader">
+          <p style="text-align: center">
+            You will be redirected to the home page in a few seconds.
+          </p>
+          <div class="loader" style="margin-bottom: 10px">
             <div class="ball"></div>
             <div class="ball"></div>
             <div class="ball"></div>
@@ -258,6 +265,7 @@
             >YES</b-button
           ></span
         ><!-- variant="danger"-->
+        <span style="padding-left: 40px" v-if="showLoader"></span>
       </template>
     </b-modal>
     <!--  MODAL FOR CONFIRM CREATION/UPDATE OF TRIP -->
@@ -376,27 +384,33 @@ export default {
     checkInformations: function () {
       if (!this.date) {
         this.validation.invalid.date = "Please select a date.";
+        this.validation.valid.date = "";
         this.errorDate = true;
       } else {
         this.errorDate = false;
         this.validation.valid.date = "Date is fine";
+        this.validation.invalid.date = "";
       }
 
       if (!this.place) {
         this.validation.invalid.place = "Please type a place.";
+        this.validation.valid.place = "";
         this.errorPlace = true;
       } else {
         this.errorPlace = false;
         this.validation.valid.place = "Place is fine";
+        this.validation.invalid.place = "";
       }
 
       if (!this.transportation) {
         this.validation.invalid.transportation =
           "Please select a transportation.";
+        this.validation.valid.transportation = "";
         this.errorTransportation = true;
       } else {
         this.errorTransportation = false;
         this.validation.valid.transportation = "Transportation is fine";
+        this.validation.invalid.transportation = "";
       }
 
       if (this.description != null && this.description.length > 300) {
@@ -404,13 +418,15 @@ export default {
           "You can only inset 200 characters (" +
           this.description.length +
           "/200)";
+        this.validation.valid.description = "";
         this.errorDescription = true;
       } else {
         this.errorDescription = false;
         this.validation.valid.description = "Description is fine";
+        this.validation.invalid.description = "";
       }
 
-      console.log(this.myTripGeoJSON);
+      // console.log(this.myTripGeoJSON);
 
       this.$forceUpdate();
       if (
@@ -450,9 +466,10 @@ export default {
           deleteResponse = response;
         })
         .catch(function (error) {
+          errorStatus = error.response.status;
           console.log(error);
         });
-      console.log(deleteResponse);
+      // console.log(deleteResponse);
       if (errorStatus != 0) {
         this.showErrorNotification();
         setTimeout(() => {
@@ -516,11 +533,11 @@ export default {
       let trip;
       let okResponse;
       let errorStatus = 0;
-      console.log(`maxDistance ${this.maxDistanceError}`);
+      // console.log(`maxDistance ${this.maxDistanceError}`);
       if (this.checkInformations()) {
-        console.log(this.checkInformations());
+        // console.log(this.checkInformations());
         if (this.idTrip == null) {
-          console.log(`id null? == ${this.idTrip}`);
+          // console.log(`id null? == ${this.idTrip}`);
           trip = {
             PLACE: this.place,
             TRANSPORTATION: this.transportation,
@@ -538,7 +555,7 @@ export default {
               errorStatus = error.response.status;
               console.log(error);
             });
-          console.log(okResponse);
+          // console.log(okResponse);
           if (errorStatus != 0) {
             this.showErrorNotification();
             setTimeout(() => {
@@ -579,7 +596,7 @@ export default {
               errorStatus = error.response.status;
               console.log(error);
             });
-          console.log(okResponse);
+          // console.log(okResponse);
           if (errorStatus != 0) {
             this.showErrorNotification();
             setTimeout(() => {
@@ -643,13 +660,13 @@ export default {
       // let geojson = JSON.stringify(this.myTripGeoJSON, null, 4);
       // this.geoJsonText = geojson.toString();
       this.stageNameKey += 1;
-      console.log(`stageNameKey: ${this.stageNameKey}`);
+      // console.log(`stageNameKey: ${this.stageNameKey}`);
     },
 
     updateTripCoordinates(value, maxDistanceError) {
       this.myTripGeoJSON = value;
       this.maxDistanceError = maxDistanceError;
-      console.log(`in updateTRIP, maxDistanceError: ${this.maxDistanceError}`);
+      // console.log(`in updateTRIP, maxDistanceError: ${this.maxDistanceError}`);
       // let geojson = JSON.stringify(this.myTripGeoJSON, null, 4);
       // this.geoJsonText = geojson.toString();
       this.getMainStagesAndPathCoordinate();
@@ -659,21 +676,21 @@ export default {
 </script>
 
 <style scoped>
-.myContainer {
+/* .myContainer {
   max-width: 850px;
   padding: 20px;
   margin: auto;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-}
+} */
 .margin-button {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 h2 {
   color: #155263;
 }
-
-input[type="checkbox"] {
-  transform: scale(1.6);
+div.col-sm {
+  /* margin-top: 5px; */
+  margin-bottom: 10px;
 }
 </style>

@@ -5,7 +5,7 @@
       v-on:change="onMapUpdate()" -->
       <l-map
         ref="map"
-        style="height: 500px; width: 100%"
+        style="height: 450px; width: 100%"
         :zoom="zoom"
         :center="center"
         @update:zoom="zoomUpdated"
@@ -112,7 +112,6 @@ export default {
       this.map = this.$refs.map.mapObject;
       // FeatureGroup is to store editable layers
       let drawnItems = new L.FeatureGroup().addTo(this.map);
-      // console.log(drawnItems);
       this.map.addLayer(drawnItems);
       let $this = this;
 
@@ -136,7 +135,7 @@ export default {
       function onEachFeature(feature, layer) {
         drawnItems.addLayer(layer);
         // if (feature.geometry.type === "Point") {
-        console.log(feature.geometry);
+        // console.log(feature.geometry);
         layer.bindPopup(
           "<p>" +
             feature.properties.name +
@@ -144,13 +143,13 @@ export default {
             feature.geometry.coordinates[1] +
             ", " +
             feature.geometry.coordinates[0] +
-            ")</p><hr/><p>" +
+            ")</p><p v-if='feature.properties.description'>" +
             feature.properties.description +
             "</p>"
         );
         // }
       }
-      console.log(this.myTripGeoJSON);
+      // console.log(this.myTripGeoJSON);
       if (this.myTripGeoJSON == null || this.myTripGeoJSON === "undefined") {
         // console.log("myTripGeoJSOn null or undefined");
       } else {
@@ -162,10 +161,10 @@ export default {
           let path = this.myTripGeoJSON.features.filter(
             (value) => value.geometry.type === "LineString"
           );
-          console.log(featureJson.getLayers());
+          // console.log(featureJson.getLayers());
           // this.map.on("load", showText);
           showText(featureJson.getLayers());
-          console.log(path);
+          // console.log(path);
           if (path != null && path.length > 0) {
             this.map.pm.addControls({ drawPolyline: false });
             this.map.pm.addControls({ drawMarker: true });
@@ -187,13 +186,13 @@ export default {
 
       this.map.on("pm:create", function (e) {
         //({ layer }) =>
-        console.log("Pm:create");
+        // console.log("Pm:create");
         let layer = e.layer;
 
         let feature = (layer.feature = layer.feature || {});
         feature.type = "Feature";
         feature.properties = feature.properties || {};
-        feature.properties["name"] = "";
+        feature.properties["name"] = "Stage";
         feature.properties["description"] = "";
         polyline = $this.getPath(drawnItems);
         if (layer.pm._shape === "Line") {
@@ -203,7 +202,7 @@ export default {
           $this.map.pm.addControls({ drawPolyline: false });
           $this.map.pm.addControls({ drawMarker: true });
 
-          console.log(polyline);
+          // console.log(polyline);
           $this.$emit(
             "updateCoordinates",
             drawnItems.toGeoJSON(),
@@ -212,24 +211,24 @@ export default {
         } else {
           // MARKER
           // polyline = polyline[0].geometry.coordinates;
-          console.log(polyline);
-          console.log(layer._latlng);
+          // console.log(polyline);
+          // console.log(layer._latlng);
           // if (polyline != null && polyline.length > 0) {
-          console.log("check if marker is on line");
+          // console.log("check if marker is on line");
 
           let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
-          console.log(point);
+          // console.log(point);
           let line = turf.lineString(polyline);
-          console.log(line);
-          console.log(turf.booleanPointOnLine(point, line));
+          // console.log(line);
+          // console.log(turf.booleanPointOnLine(point, line));
 
           let distance = turf.pointToLineDistance(point, line, {
             units: "meters",
           });
-          console.log(`The distanceMeter is: ${distance}`);
+          // console.log(`The distanceMeter is: ${distance}`);
           if (distance <= 200) {
             $this.distanceError = false;
-            console.log("distance OK");
+            // console.log("distance OK");
             drawnItems.addLayer(layer);
             $this.$emit(
               "updateCoordinates",
@@ -245,15 +244,16 @@ export default {
         }
       });
 
-      drawnItems.on("pm:enable", (e) => {
-        console.log("enable");
-        console.log(e);
+      drawnItems.on("pm:enable", () => {
+        // (e)
+        // console.log("enable");
+        // console.log(e);
         // if (e.source === "Edit") {
         $this.editRouteAlert = true;
         // }
       });
       drawnItems.on("pm:disable", () => {
-        console.log("disable");
+        // console.log("disable");
         $this.editRouteAlert = false;
       });
 
@@ -267,34 +267,34 @@ export default {
       // });
 
       drawnItems.on("pm:edit", function (e) {
-        console.log("edit");
+        // console.log("edit");
         let layer = e.layer;
         $this.editRouteAlert = false;
         //SE EDIT POLYLINE SHOW MESSAGE THAT THE MARKER WILL BE LOST
-        console.log(drawnItems);
+        // console.log(drawnItems);
         if (layer.pm._shape === "Line") {
           $this.map.eachLayer(function (subLayer) {
             if (subLayer instanceof L.Marker) {
-              console.log("remove marker layer");
+              // console.log("remove marker layer");
               drawnItems.removeLayer(subLayer);
             }
           });
         } else {
-          console.log(layer._latlng);
+          // console.log(layer._latlng);
           let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
-          console.log(point);
+          // console.log(point);
           // polyline = polyline[0].geometry.coordinates;
           let line = turf.lineString(polyline);
-          console.log(line);
-          console.log(turf.booleanPointOnLine(point, line));
+          // console.log(line);
+          // console.log(turf.booleanPointOnLine(point, line));
 
           let distance = turf.pointToLineDistance(point, line, {
             units: "meters",
           });
-          console.log(`The distanceMeter is: ${distance}`);
+          // console.log(`The distanceMeter is: ${distance}`);
           if (distance <= 200) {
             $this.distanceError = false;
-            console.log("distance OK");
+            // console.log("distance OK");
             drawnItems.addLayer(layer);
             $this.$emit(
               "updateCoordinates",
@@ -315,27 +315,27 @@ export default {
         );
       });
       drawnItems.on("pm:snapdrag", function (e) {
-        console.log("pm:snapdrag");
-        console.log(e);
+        // console.log("pm:snapdrag");
+        // console.log(e);
         let layer = e.layer;
         if (layer.pm._shape === "Marker") {
-          console.log(layer._latlng);
+          // console.log(layer._latlng);
           let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
-          console.log(point);
-          console.log(polyline);
+          // console.log(point);
+          // console.log(polyline);
           // polyline = polyline[0].geometry.coordinates;
           // console.log(polyline);
           let line = turf.lineString(polyline);
-          console.log(line);
-          console.log(turf.booleanPointOnLine(point, line));
+          // console.log(line);
+          // console.log(turf.booleanPointOnLine(point, line));
 
           let distance = turf.pointToLineDistance(point, line, {
             units: "meters",
           });
-          console.log(`The distanceMeter is: ${distance}`);
+          // console.log(`The distanceMeter is: ${distance}`);
           if (distance <= 200) {
             $this.distanceError = false;
-            console.log("distance OK");
+            // console.log("distance OK");
             drawnItems.addLayer(layer);
             $this.$emit(
               "updateCoordinates",
@@ -353,14 +353,14 @@ export default {
 
       this.map.on("pm:globalremovalmodetoggled", () => {
         // console.log(e);
-        console.log("globalremovalmodetoggled");
+        // console.log("globalremovalmodetoggled");
         $this.editRouteAlert = true;
       });
 
       // this.map.pm.globalRemovalEnabled()
       this.map.on("pm:remove", (e) => {
         $this.editRouteAlert = false;
-        console.log("remove");
+        // console.log("remove");
         let layer = e.layer;
         if (layer.pm._shape === "Line") {
           $this.map.pm.addControls({ drawPolyline: true });
@@ -368,14 +368,14 @@ export default {
           $this.distanceError = false;
           drawnItems.eachLayer(function (subLayer) {
             if (subLayer instanceof L.Marker) {
-              console.log("remove marker layer");
+              // console.log("remove marker layer");
               drawnItems.removeLayer(subLayer);
             }
           });
         }
         drawnItems.removeLayer(e.layer);
-        console.log("layer removed");
-        console.log(drawnItems.toGeoJSON());
+        // console.log("layer removed");
+        // console.log(drawnItems.toGeoJSON());
         $this.$emit(
           "updateCoordinates",
           drawnItems.toGeoJSON(),
@@ -422,10 +422,9 @@ export default {
       );
     },
 
-    // TODO forse non mi serve
     getPath(drawnItems) {
       let features = drawnItems.toGeoJSON().features;
-      console.log(features);
+      // console.log(features);
       if (features.length > 0) {
         let path = features.filter(
           (value) => value.geometry.type === "LineString"

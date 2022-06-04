@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
 const url = "/WhatATrip/api/user";
 export default {
   async createUser(dati) {
@@ -28,19 +28,30 @@ export default {
     });
   },
 
-  async updateUser(dati) {
-    return axios.put(url + "/update", JSON.stringify(dati), {
-      headers: {
-        "Content-type": "application/json",
-        "x-access-token": token,
-      },
-    });
-  },
+  // async updateUser(dati) {
+  //   return axios.put(url + "/update", JSON.stringify(dati), {
+  //     headers: {
+  //       "Content-type": "application/json",
+  //       "x-access-token": token,
+  //     },
+  //   });
+  // },
 
   logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("id");
     localStorage.removeItem("username");
     localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.setItem("isLogged", false);
+  },
+
+  async getAllUsers(token) {
+    return axios.get(url + "/getAll", {
+      headers: {
+        "Content-type": "application/json",
+        "x-access-token": token,
+      },
+    });
   },
 };
