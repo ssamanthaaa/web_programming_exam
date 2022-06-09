@@ -16,7 +16,7 @@
       realize this web application are:
       <ul>
         <li>Apache Tomcat</li>
-        <li>Eclipse for the development of the bakend part</li>
+        <li>Eclipse for the development of the backend part</li>
         <li>Visual Studio Code for the development of the frontend part</li>
         <li>MySQL</li>
         <li>Axios</li>

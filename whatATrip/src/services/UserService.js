@@ -37,13 +37,20 @@ export default {
   //   });
   // },
 
-  logout() {
+  async logout(id, token) {
     localStorage.removeItem("token");
     localStorage.removeItem("id");
     localStorage.removeItem("username");
     localStorage.removeItem("email");
     localStorage.removeItem("role");
     localStorage.setItem("isLogged", false);
+    return axios.delete(url + "/logout", {
+      // JSON.stringify({ id: id })
+      headers: {
+        "Content-type": "application/json",
+        "x-access-token": token,
+      },
+    });
   },
 
   async getAllUsers(token) {

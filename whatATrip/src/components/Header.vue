@@ -96,13 +96,24 @@ export default {
     return {
       showLoaderLogout: false,
       userRole: null,
+      id: null,
+      token: null,
     };
   },
   methods: {
-    logout: function () {
+    // logout: function () {
+    //   this.showLoaderLogout = true;
+    //   setTimeout(() => {
+    //     UserService.logout();
+    //     this.$router.push({
+    //       path: "/login",
+    //     });
+    //   }, 2000);
+    // },
+    logout: async function () {
       this.showLoaderLogout = true;
       setTimeout(() => {
-        UserService.logout();
+        UserService.logout(this.id, this.token);
         this.$router.push({
           path: "/login",
         });
@@ -111,6 +122,8 @@ export default {
   },
   mounted() {
     this.userRole = localStorage.getItem("role");
+    this.token = localStorage.getItem("token");
+    this.id = localStorage.getItem("id");
   },
 };
 </script>

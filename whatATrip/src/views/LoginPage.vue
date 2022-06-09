@@ -1,12 +1,6 @@
 <template>
-  <!-- style="background-color: #1e2833"-->
   <div id="app">
     <div class="myLoginPage">
-      <!-- <transition name="fade">
-      <div v-if="!registerActive" class="wallpaper-login"></div>
-    </transition>
-    <div class="wallpaper-register"></div> -->
-
       <div class="container">
         <div class="row">
           <div class="col-lg-4 col-md-6 col-sm-8 mx-auto">
@@ -17,7 +11,6 @@
             >
               <div class="illustration">
                 <h1>What A Trip</h1>
-                <!-- <Icon icon="carbon:locked" style="" /> -->
                 <img
                   src="@/assets/img/whatATrip.png"
                   class="img-fluid"
@@ -82,7 +75,6 @@
                   class="form-group invalid-credentials"
                   v-if="showWrongCredentials"
                 >
-                  <!-- SONO dentro showWrongCredentials,  valid: {{ validation.valid.credentials }}, invalid: {{ validation.invalid.credentials }}. -->
                   <div>
                     {{ wrongCredentialsMessage }}
                   </div>
@@ -109,7 +101,6 @@
             <div v-else class="card" v-bind:class="{ error: emptyFields }">
               <div class="illustration">
                 <h1>What A Trip</h1>
-                <!-- <Icon icon="carbon:locked" /> -->
                 <img
                   src="@/assets/img/whatATrip.png"
                   class="img-fluid"
@@ -259,14 +250,10 @@
 </template>
 <script>
 import UserService from "@/services/UserService.js";
-// import { Icon } from "@iconify/vue2";
-// import axios from "axios";
 
 export default {
   name: "LoginPage",
-  components: {
-    // Icon,
-  },
+  components: {},
   data() {
     return {
       registerActive: false,
@@ -320,7 +307,7 @@ export default {
             console.log(error);
             errorStatus = error.response.status;
           });
-        // console.log(errorStatus);
+
         if (errorStatus == 401 || errorStatus == 404) {
           this.wrongCredentials();
         } else {
@@ -350,7 +337,6 @@ export default {
               path: "/welcome",
             });
           } else {
-            // alert("The credentials are wrong!");
             console.log("There is a problem");
           }
         }
@@ -376,7 +362,7 @@ export default {
 
     async doRegister() {
       this.clearValidationLogin();
-      // this.validateRegistration();
+
       let errorStatus;
       if (!this.validateRegistration()) {
         this.emptyFields = true;
@@ -453,7 +439,7 @@ export default {
         this.validation.valid.passwordLogin = "Password is fine.";
         this.validation.invalid.passwordLogin = "";
       }
-      // force update because deep object change
+
       this.$forceUpdate();
       if (this.usernameLoginError || this.passwordLoginError) {
         return false;
@@ -524,7 +510,6 @@ export default {
         this.validation.invalid.confirmPassword = "";
       }
 
-      // force update because deep object change
       this.$forceUpdate();
       if (
         this.emailError ||
@@ -551,7 +536,6 @@ export default {
     },
     credentialsExisting: function (status) {
       if (status == 404 || status == 401) {
-        //not availbale server
         this.showCredentialsExisting = false;
         this.showErrorMessage = true;
         this.validation.valid.usernameRegistration = "";
@@ -594,14 +578,11 @@ export default {
 
 h1 {
   color: #ff6f3c;
-  /* font-family: "Parisienne", cursive; */
-  /* font-family: "Indie Flower", cursive; */
   font-family: "Shadows Into Light", cursive;
   font-weight: bold;
 }
 h2 {
   color: #ff9a3c;
-  /* font-family: "Parisienne", cursive; */
 }
 a {
   color: #ff6f3c;
@@ -628,7 +609,6 @@ p {
   align-items: center;
   display: flex;
   height: calc(100% - 100px);
-  /* 100vh; */
 }
 
 .error {
@@ -655,13 +635,6 @@ p {
   color: #dc3545;
 }
 
-.wallpaper-login {
-  background-color: rgb(250, 206, 190);
-  background-size: cover;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
@@ -669,14 +642,5 @@ p {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-}
-
-.wallpaper-register {
-  background-color: rgb(250, 206, 190);
-  background-size: cover;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-  z-index: -1;
 }
 </style>

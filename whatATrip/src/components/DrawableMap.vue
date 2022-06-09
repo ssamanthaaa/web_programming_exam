@@ -86,11 +86,11 @@ export default {
   },
   mounted() {
     this.drawnItems = this.initMap();
-    this.$emit(
-      "updateCoordinates",
-      this.drawnItems.toGeoJSON(),
-      this.maxDistanceError
-    );
+    // this.$emit(
+    //   "updateCoordinates",
+    //   this.drawnItems.toGeoJSON(),
+    //   this.maxDistanceError
+    // );
   },
 
   methods: {
@@ -171,6 +171,30 @@ export default {
           }
           for (let i = 0; i < this.myTripGeoJSON.features.length; ++i) {
             if (this.myTripGeoJSON.features[i].geometry.type === "Point") {
+              let point = turf.point([
+                this.myTripGeoJSON.features[i].geometry.coordinates[0],
+                this.myTripGeoJSON.features[i].geometry.coordinates[1],
+              ]);
+              // console.log(point);
+              // console.log(path[0]);
+              let line = turf.lineString(path[0].geometry.coordinates);
+              // console.log(line);
+
+              let distance = turf.pointToLineDistance(point, line, {
+                units: "meters",
+              });
+              if (distance > 200) {
+                this.distance = distance.toFixed(2);
+                this.distanceError = true;
+                // console.log(`distanceError = ${this.distanceError}`);
+                this.$emit(
+                  "updateCoordinates",
+                  drawnItems.toGeoJSON(),
+                  this.distanceError
+                );
+              } else {
+                this.distanceError = false;
+              }
               this.map.fitBounds(featureJson.getBounds());
               break;
             }
@@ -179,56 +203,36 @@ export default {
       }
 
       let polyline = this.getPath(drawnItems);
-      // if (polyline != null && polyline != undefined) {
-      //   polyline = polyline[0].geometry.coordinates;
-      // }
-      // let maxDistance = 200; //maximum distance between stage and path
 
       this.map.on("pm:create", function (e) {
-        //({ layer }) =>
-        // console.log("Pm:create");
         let layer = e.layer;
 
         let feature = (layer.feature = layer.feature || {});
         feature.type = "Feature";
         feature.properties = feature.properties || {};
         feature.properties["name"] = "Stage";
-        feature.properties["description"] = "";
+        feature.properties["description"] = null;
         polyline = $this.getPath(drawnItems);
         if (layer.pm._shape === "Line") {
           feature.properties["name"] = "Path";
           drawnItems.addLayer(layer);
-          // polyline = $this.getPath(drawnItems);
           $this.map.pm.addControls({ drawPolyline: false });
           $this.map.pm.addControls({ drawMarker: true });
 
-          // console.log(polyline);
           $this.$emit(
             "updateCoordinates",
             drawnItems.toGeoJSON(),
             $this.maxDistanceError
           );
         } else {
-          // MARKER
-          // polyline = polyline[0].geometry.coordinates;
-          // console.log(polyline);
-          // console.log(layer._latlng);
-          // if (polyline != null && polyline.length > 0) {
-          // console.log("check if marker is on line");
-
           let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
-          // console.log(point);
           let line = turf.lineString(polyline);
-          // console.log(line);
-          // console.log(turf.booleanPointOnLine(point, line));
 
           let distance = turf.pointToLineDistance(point, line, {
             units: "meters",
           });
-          // console.log(`The distanceMeter is: ${distance}`);
           if (distance <= 200) {
             $this.distanceError = false;
-            // console.log("distance OK");
             drawnItems.addLayer(layer);
             $this.$emit(
               "updateCoordinates",
@@ -245,56 +249,31 @@ export default {
       });
 
       drawnItems.on("pm:enable", () => {
-        // (e)
-        // console.log("enable");
-        // console.log(e);
-        // if (e.source === "Edit") {
         $this.editRouteAlert = true;
-        // }
       });
       drawnItems.on("pm:disable", () => {
-        // console.log("disable");
         $this.editRouteAlert = false;
+        this.distanceError = false;
       });
 
-      // this.map.on("pm:drawstart", ({ workingLayer }) => {
-      //   console.log("drawstart");
-      //   console.log(workingLayer);
-      //   workingLayer.on("pm:vertexadded", (e) => {
-      //     console.log(e);
-      //     console.log("added vertex");
-      //   });
-      // });
-
       drawnItems.on("pm:edit", function (e) {
-        // console.log("edit");
         let layer = e.layer;
         $this.editRouteAlert = false;
-        //SE EDIT POLYLINE SHOW MESSAGE THAT THE MARKER WILL BE LOST
-        // console.log(drawnItems);
         if (layer.pm._shape === "Line") {
           $this.map.eachLayer(function (subLayer) {
             if (subLayer instanceof L.Marker) {
-              // console.log("remove marker layer");
               drawnItems.removeLayer(subLayer);
             }
           });
         } else {
-          // console.log(layer._latlng);
           let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
-          // console.log(point);
-          // polyline = polyline[0].geometry.coordinates;
           let line = turf.lineString(polyline);
-          // console.log(line);
-          // console.log(turf.booleanPointOnLine(point, line));
 
           let distance = turf.pointToLineDistance(point, line, {
             units: "meters",
           });
-          // console.log(`The distanceMeter is: ${distance}`);
           if (distance <= 200) {
             $this.distanceError = false;
-            // console.log("distance OK");
             drawnItems.addLayer(layer);
             $this.$emit(
               "updateCoordinates",
@@ -305,7 +284,6 @@ export default {
           } else {
             $this.distance = distance.toFixed(2);
             $this.distanceError = true;
-            // $this.map.removeLayer(layer);
           }
         }
         $this.$emit(
@@ -315,27 +293,16 @@ export default {
         );
       });
       drawnItems.on("pm:snapdrag", function (e) {
-        // console.log("pm:snapdrag");
-        // console.log(e);
         let layer = e.layer;
         if (layer.pm._shape === "Marker") {
-          // console.log(layer._latlng);
           let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
-          // console.log(point);
-          // console.log(polyline);
-          // polyline = polyline[0].geometry.coordinates;
-          // console.log(polyline);
           let line = turf.lineString(polyline);
-          // console.log(line);
-          // console.log(turf.booleanPointOnLine(point, line));
 
           let distance = turf.pointToLineDistance(point, line, {
             units: "meters",
           });
-          // console.log(`The distanceMeter is: ${distance}`);
           if (distance <= 200) {
             $this.distanceError = false;
-            // console.log("distance OK");
             drawnItems.addLayer(layer);
             $this.$emit(
               "updateCoordinates",
@@ -352,15 +319,11 @@ export default {
       });
 
       this.map.on("pm:globalremovalmodetoggled", () => {
-        // console.log(e);
-        // console.log("globalremovalmodetoggled");
         $this.editRouteAlert = true;
       });
 
-      // this.map.pm.globalRemovalEnabled()
       this.map.on("pm:remove", (e) => {
         $this.editRouteAlert = false;
-        // console.log("remove");
         let layer = e.layer;
         if (layer.pm._shape === "Line") {
           $this.map.pm.addControls({ drawPolyline: true });
@@ -368,14 +331,11 @@ export default {
           $this.distanceError = false;
           drawnItems.eachLayer(function (subLayer) {
             if (subLayer instanceof L.Marker) {
-              // console.log("remove marker layer");
               drawnItems.removeLayer(subLayer);
             }
           });
         }
         drawnItems.removeLayer(e.layer);
-        // console.log("layer removed");
-        // console.log(drawnItems.toGeoJSON());
         $this.$emit(
           "updateCoordinates",
           drawnItems.toGeoJSON(),
@@ -385,35 +345,16 @@ export default {
       });
 
       function showText() {
-        // let layer = e.layer;
-        // layer.addTo(drawnItems);
         let geojson = JSON.stringify(drawnItems.toGeoJSON(), null, 4);
         $this.geoJsonText = geojson.toString();
       }
       this.map.addEventListener("pm:create", showText);
       drawnItems.addEventListener("pm:edit", showText);
 
-      //TODO NON PENSO MI SERVA
-      /*
-      let getShapes = function (drawnItems) {
-        let shapes = [];
-        shapes["polyline"] = [];
-        shapes["marker"] = [];
-        drawnItems.eachLayer(function (layer) {
-          if (layer instanceof L.Polyline) {
-            shapes["polyline"].push(layer.getLatLngs());
-          }
-          if (layer instanceof L.Marker) {
-            shapes["marker"].push([layer.getLatLng()]);
-          }
-        });
-        return shapes;
-      };
-      */
       return drawnItems;
     },
 
-    // emit updated coordinates to parent (UodateTrip.vue)
+    // emit updated coordinates to parent (UpdateTrip.vue)
     updateCoordinates() {
       this.$emit(
         "updateCoordinates",
@@ -424,36 +365,14 @@ export default {
 
     getPath(drawnItems) {
       let features = drawnItems.toGeoJSON().features;
-      // console.log(features);
       if (features.length > 0) {
         let path = features.filter(
           (value) => value.geometry.type === "LineString"
         );
-        //polyline = polyline[0].geometry.coordinates;
         return path[0].geometry.coordinates;
       } else {
         return null;
       }
-    },
-
-    //TODO NON USATA
-    getMainStages(drawnItems) {
-      let features = drawnItems.toGeoJSON().features;
-      let points = features.filter((value) => value.geometry.type === "Point");
-      console.log("points");
-      console.log(points);
-      let mainStages = [];
-      for (let i = 0; i < points.length; ++i) {
-        mainStages.push([
-          points[i].geometry.coordinates[1],
-          points[i].geometry.coordinates[0],
-        ]);
-      }
-      console.log(mainStages);
-      // path = path[0].geometry.coordinates;
-      // console.log("path");
-      // console.log(path);
-      // return path;
     },
   },
 };

@@ -109,8 +109,6 @@ export default {
           );
         }
       }
-      // console.log("carico pathjson");
-      // console.log(this.pathJson);
       if (this.tripList.length > 0) {
         // let mygeojson =
         for (let i = 0; i < this.tripList.length; ++i) {
@@ -120,47 +118,14 @@ export default {
             onEachFeature: onEachFeature,
             color: "red",
           }).addTo(this.map);
-          // if (i == 0) {
-          //   console.log(featureJson.getBounds());
-          //   this.map.fitBounds(featureJson.getBounds());
-          //   this.zoom = 6;
-          // }
         }
         this.map.fitBounds(drawnItems.getBounds());
         this.zoom = 6;
       }
     },
-
-    /*
-    createPath: function () {
-      const bounds = latLngBounds(this.allMarkers.map((o) => o.position));
-      // console.log(bounds);
-      // this.allPolylines = [];
-      this.bounds = bounds;
-    },
-
-    getValori: function () {
-      for (let i = 0; i < this.$store.state.trips.length; ++i) {
-        this.allMarkers = this.$store.state.trips[i].TAPPE_PRINCIPALI;
-        this.allPolylines =
-          this.$store.state.trips[i].TAPPE_PRINCIPALI.position;
-      }
-      this.createPath();
-    },*/
   },
   mounted() {
-    // this.getValori();
     this.loadMap();
   },
 };
-/*
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1,
-    accessToken: 'your.mapbox.access.token'
-}).addTo(map);
-*/
 </script>

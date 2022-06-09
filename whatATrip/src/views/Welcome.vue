@@ -1,9 +1,6 @@
 <template>
   <div class="container my-margin" id="app">
-    <!-- my-margin -->
     <section>
-      <!-- <section> -->
-      <!-- <div > -->
       <div class="row justify-content-center">
         <h1 class="titles">
           Welcome, <span>{{ username }}</span
@@ -28,18 +25,15 @@
       <div class="row justify-content-center">
         <div class="col-sm">
           <a
-            href="https://www.youtube.com/watch?v=dighxafYyqo"
+            href="https://youtu.be/kIeKdFZK0GE"
             target="_blank"
             class="router-link-style"
             ><button class="btn orange-color w-100">See Tutorial</button>
           </a>
         </div>
       </div>
-      <!-- </section> -->
-      <!-- <section>
-        <h2 class="titles">Tutorial</h2>
-      </section> -->
     </section>
+
     <!--  MODAL sesssion expired -->
     <b-modal v-model="showExpiredError" size="md">
       <template #modal-header="{ close }">
@@ -107,7 +101,7 @@ export default {
         }, 2000);
       } else {
         if (okResponse.status == 200) {
-          console.log(okResponse);
+          // console.log(okResponse);
         }
       }
     },
@@ -144,7 +138,6 @@ div.col-sm {
   margin-top: 10px;
 }
 .my-logo {
-  /* max-height: 100px; */
   max-width: 50%;
 }
 
@@ -152,7 +145,4 @@ div.col-sm {
   padding-top: 5px;
   padding-bottom: 5px;
 }
-/* .my-margin {
-  padding-bottom: 10%;
-} */
 </style>

@@ -28,19 +28,14 @@ body {
 
 #app {
   // font-family: "Parisienne";
-  // font-family: "Dancing Script", cursive;
-  // font-family: "Shadows Into Light";
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #155263;
-  // margin-top: 130px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  // width: 100%;
-  // height: 100%;
 }
 
 h1,
@@ -63,30 +58,19 @@ nav {
 
 .content {
   flex: 1 0 auto;
-  /* Prevent Chrome, Opera, and Safari from letting these items shrink to smaller than their content's default minimum size. */
   padding: 20px;
   width: 100%;
-  // height: 1000vh;
-  // position: relative;
   display: flex;
   flex-direction: column;
   min-height: 90vh;
 }
-
-// .footer {
-//   flex-shrink: 0;
-//   /* Prevent Chrome, Opera, and Safari from letting these items shrink to smaller than their content's default minimum size. */
-//   padding: 20px;
-// }
 
 * {
   box-sizing: border-box;
 }
 #footer {
   bottom: 0;
-  // position: fixed;
   width: 100%;
-  // margin-top: 20px;
   margin-top: auto;
 }
 </style>

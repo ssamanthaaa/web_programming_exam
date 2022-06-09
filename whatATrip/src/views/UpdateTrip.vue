@@ -1,11 +1,5 @@
 <template>
   <div class="container my-margin" id="app">
-    <!-- <div class="row justify-content-center">
-      <div class="heading col" v-if="idTrip != null">
-      </div>
-      <div class="heading col" v-else>
-      </div>
-    </div> -->
     <div class="row justify-content-center">
       <div class="col">
         <h2 v-if="idTrip != null" class="titles">
@@ -94,24 +88,9 @@
           {{ validation.invalid.transportation }}
         </div>
       </div>
-      <!-- <div v-if="mainStages != null && mainStages.length > 0"> -->
+
       <div v-if="myTripGeoJSON != null && myTripGeoJSON.features.length > 1">
         <h5>Main stages</h5>
-        <!-- <div
-          class="mb-3"
-          v-for="(value, index) in myTripGeoJSON.features"
-          v-bind:key="index"
-        > -->
-        <!-- <div class="row">
-          <div class="col-3">
-          </div>
-          <div class="col-3">
-          </div>
-          <div class="col-3">
-          </div>
-          <div class="col-3">
-          </div>
-        </div> -->
         <div
           v-for="(value, index) in myTripGeoJSON.features"
           v-bind:key="index"
@@ -159,7 +138,6 @@
             <hr />
           </div>
         </div>
-        <!-- </div> -->
       </div>
       <div class="mb-3">
         <div class="custom-control custom-checkbox checkbox-lg">
@@ -200,13 +178,13 @@
     </div>
 
     <!-- token expired notification -->
-    <notifications
+    <!-- <notifications
       group="unauthorized"
       position="top center"
       width="40%"
       style="top: 40%"
       v-if="showErrorMessage"
-    />
+    /> -->
     <div class="row margin-button">
       <div class="col" v-if="idTrip != null">
         <button
@@ -229,13 +207,16 @@
     </div>
     <div class="row margin-button">
       <div class="col">
-        <router-link to="/dashboard" class="btn orange-color w-100"
+        <router-link
+          to="/dashboard"
+          class="btn orange-color w-100"
+          style="color: white"
           >Go back</router-link
         >
       </div>
     </div>
 
-    <!--  MODAL FOR CONFIRM DELETE TRIP -->
+    <!--  MODAL TO CONFIRM DELETE TRIP -->
     <b-modal v-model="showDeleteTrip" size="md">
       <template #modal-header="{ close }">
         <b-button size="sm" class="dark-color" @click="close()">X</b-button>
@@ -264,10 +245,11 @@
           ><b-button class="orange-color" @click="deleteTrip()"
             >YES</b-button
           ></span
-        ><!-- variant="danger"-->
+        >
         <span style="padding-left: 40px" v-if="showLoader"></span>
       </template>
     </b-modal>
+
     <!--  MODAL FOR CONFIRM CREATION/UPDATE OF TRIP -->
     <b-modal v-model="showSuccessTrip" size="md">
       <template #modal-header="{ close }">
@@ -282,6 +264,34 @@
         </h3>
         <h3 style="color: #ff6f3c; text-align: center; margin-top: 15px" v-else>
           Your trip was successfully created.
+        </h3>
+        <p style="text-align: center">
+          You will be redirected to the home page in a few seconds.
+        </p>
+        <div class="row justify-content-center">
+          <div class="loader" v-if="showLoader">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <span>Redirecting...</span>
+          </div>
+        </div>
+      </template>
+      <template #modal-footer="{ ok }">
+        <span style="padding-right: 40px"
+          ><b-button class="orange-color" @click="ok()">OK</b-button></span
+        >
+      </template>
+    </b-modal>
+
+    <!--  MODAL sesssion expired -->
+    <b-modal v-model="showExpiredError" size="md">
+      <template #modal-header="{ close }">
+        <b-button size="sm" class="dark-color" @click="close()">X</b-button>
+      </template>
+      <template>
+        <h3 style="color: #ff6f3c; text-align: center; margin-top: 15px">
+          Your session is expired.
         </h3>
         <p style="text-align: center">
           You will be redirected to the home page in a few seconds.
@@ -355,9 +365,10 @@ export default {
       routeError: false,
       errorStatus: false,
       showErrorMessage: false,
+      showExpiredError: false,
 
       showDeleteTrip: false,
-      showLoader: false,
+      showLoader: true,
     };
   },
 
@@ -376,11 +387,6 @@ export default {
   mounted: function () {},
 
   methods: {
-    /*
-    alert(item) {
-      alert("Luogo: " + JSON.stringify(item));
-    },*/
-
     checkInformations: function () {
       if (!this.date) {
         this.validation.invalid.date = "Please select a date.";
@@ -426,8 +432,6 @@ export default {
         this.validation.invalid.description = "";
       }
 
-      // console.log(this.myTripGeoJSON);
-
       this.$forceUpdate();
       if (
         this.errorDate ||
@@ -469,16 +473,15 @@ export default {
           errorStatus = error.response.status;
           console.log(error);
         });
-      // console.log(deleteResponse);
       if (errorStatus != 0) {
-        this.showErrorNotification();
+        this.showExpiredError = true;
+        // this.showErrorNotification();
         setTimeout(() => {
           UserService.logout();
           this.redirectLogout();
         }, 2000);
       } else {
         if (deleteResponse.status == 200) {
-          // this.showSuccessCreation();
           setTimeout(() => {
             this.redirectToDashboard();
           }, 2000);
@@ -505,11 +508,12 @@ export default {
           console.log(error);
         });
       if (errorStatus != 0) {
-        this.showErrorNotification();
+        this.showExpiredError = true;
+        // this.showErrorNotification();
         setTimeout(() => {
           UserService.logout();
+          this.redirectLogout();
         }, 2000);
-        this.redirectLogout();
       } else {
         if (this.trip.status == 200) {
           this.trip = this.trip.data;
@@ -533,9 +537,7 @@ export default {
       let trip;
       let okResponse;
       let errorStatus = 0;
-      // console.log(`maxDistance ${this.maxDistanceError}`);
       if (this.checkInformations()) {
-        // console.log(this.checkInformations());
         if (this.idTrip == null) {
           // console.log(`id null? == ${this.idTrip}`);
           trip = {
@@ -555,9 +557,9 @@ export default {
               errorStatus = error.response.status;
               console.log(error);
             });
-          // console.log(okResponse);
           if (errorStatus != 0) {
-            this.showErrorNotification();
+            // this.showErrorNotification();
+            this.showExpiredError = true;
             setTimeout(() => {
               UserService.logout();
               this.redirectLogout();
@@ -596,9 +598,10 @@ export default {
               errorStatus = error.response.status;
               console.log(error);
             });
-          // console.log(okResponse);
+
           if (errorStatus != 0) {
-            this.showErrorNotification();
+            this.showExpiredError = true;
+            // this.showErrorNotification();
             setTimeout(() => {
               UserService.logout();
               this.redirectLogout();
@@ -614,20 +617,20 @@ export default {
           }
         }
       } else {
-        console.log(this.checkInformations());
+        // console.log(this.checkInformations());
       }
     },
 
-    showErrorNotification: function () {
-      this.showErrorMessage = true;
-      console.log(`errorNotification ${this.showErrorMessage}`);
-      this.$notify({
-        group: "unauthorized",
-        title: "Important message",
-        text: "Sorry you session is expired, you will be redirected to the login page.",
-        type: "error",
-      });
-    },
+    // showErrorNotification: function () {
+    //   this.showErrorMessage = true;
+    //   // console.log(`errorNotification ${this.showErrorMessage}`);
+    //   this.$notify({
+    //     group: "unauthorized",
+    //     title: "Important message",
+    //     text: "Sorry you session is expired, you will be redirected to the login page.",
+    //     type: "error",
+    //   });
+    // },
 
     redirectToDashboard: function () {
       this.$router.push({
@@ -657,18 +660,13 @@ export default {
     },
 
     updateStage() {
-      // let geojson = JSON.stringify(this.myTripGeoJSON, null, 4);
-      // this.geoJsonText = geojson.toString();
       this.stageNameKey += 1;
-      // console.log(`stageNameKey: ${this.stageNameKey}`);
     },
 
     updateTripCoordinates(value, maxDistanceError) {
+      // console.log(`maxDitance error = ${maxDistanceError}`);
       this.myTripGeoJSON = value;
       this.maxDistanceError = maxDistanceError;
-      // console.log(`in updateTRIP, maxDistanceError: ${this.maxDistanceError}`);
-      // let geojson = JSON.stringify(this.myTripGeoJSON, null, 4);
-      // this.geoJsonText = geojson.toString();
       this.getMainStagesAndPathCoordinate();
     },
   },
@@ -676,13 +674,6 @@ export default {
 </script>
 
 <style scoped>
-/* .myContainer {
-  max-width: 850px;
-  padding: 20px;
-  margin: auto;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-} */
 .margin-button {
   margin-top: 20px;
 }
@@ -690,7 +681,6 @@ h2 {
   color: #155263;
 }
 div.col-sm {
-  /* margin-top: 5px; */
   margin-bottom: 10px;
 }
 </style>

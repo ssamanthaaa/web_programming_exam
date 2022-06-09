@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <div class="container my-margin">
-      <!-- <div > -->
       <h1 class="titles">My trips</h1>
       <div class="row justify-content-between">
         <div class="col-sm-4">
@@ -28,16 +27,13 @@
         </div>
         <div class="row"></div>
       </div>
-      <!-- <h3>Hi {{ username }}!</h3> -->
       <div class="row">
         <div class="col map">
           <Map v-if="dataLoaded" :tripList="tripList" :key="pathJsonKey" />
         </div>
-        <!-- <div class="col"><ModificableMap/></div> -->
       </div>
 
       <div class="table-responsive">
-        <!-- </div> -->
         <table class="table table-responsive-sm table-responsive-md">
           <thead>
             <tr>
@@ -77,14 +73,9 @@
                 ></router-link>
               </td>
               <td>{{ value.DATE }}</td>
-              <!-- getDate(value.DATE) -->
               <td>{{ value.PLACE }}</td>
               <td>{{ value.TRANSPORTATION }}</td>
               <td>
-                <!-- <span v-for="(val, index) in value.GEOJSON.features"
-                      v-bind:key="index">
-
-                  </span> -->
                 <ul style="list-style-type: none">
                   <li
                     v-for="(val, index) in value.GEOJSON.features"
@@ -93,16 +84,12 @@
                     <span v-if="val.geometry.type === 'Point'">
                       {{ val.properties.name }}
                     </span>
-                    <!--  ({{
-                        val.geometry.coordinates[1]
-                      }}, {{ val.geometry.coordinates[0] }}) -->
                   </li>
                 </ul>
               </td>
             </tr>
           </tbody>
         </table>
-        <!-- </div> -->
       </div>
     </div>
     <!--  MODAL sesssion expired -->
@@ -132,14 +119,10 @@
         >
       </template>
     </b-modal>
-    <!-- <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <!-- <Footer /> -->
   </div>
 </template>
 
 <script>
-// import moment from "moment";
 import Map from "@/components/Map.vue";
 import TripService from "@/services/TripService.js";
 import DatePicker from "vue2-datepicker";
@@ -170,8 +153,6 @@ export default {
     };
   },
 
-  // mounted: function () {},
-
   mounted: async function () {
     this.idUser = localStorage.getItem("id");
     this.username = localStorage.getItem("username");
@@ -196,31 +177,20 @@ export default {
         this.dataLoaded = false;
         this.tripList = dateToArray;
         this.dataLoaded = true;
-        // this.pathJson = [];
-        // for (let i = 0; i < this.tripList.length; ++i) {
-        // if (this.tripList[i].GEOJSON != null) {
-        // this.pathJson.push(this.tripList[i]);
-        // }
-        // }
         this.$forceUpdate();
         this.pathJsonKey += 1;
       }
     },
-
-    // getDate(datetime) {
-    //   return moment(String(datetime)).format("DD/MM/YYYY");
-    // },
 
     getTrips: async function () {
       let errorStatus = 0;
       let status;
       await TripService.getAllTrips(this.idUser, this.token)
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           this.tripList = response.data;
           status = response.status;
           // console.log(this.tripList);
-          // console.log(status);
         })
         .catch(function (error) {
           errorStatus = error.response.status;
@@ -235,12 +205,11 @@ export default {
         }, 2000);
       } else {
         if (status === 200) {
-          console.log(this.tripList);
+          // console.log(this.tripList);
           if (this.tripList != null) {
             for (let i = 0; i < this.tripList.length; ++i) {
               if (this.tripList[i].GEOJSON != null) {
                 this.tripList[i].GEOJSON = JSON.parse(this.tripList[i].GEOJSON);
-                // this.pathJson.push(this.tripList[i]);
               }
             }
           }
@@ -257,7 +226,6 @@ export default {
     },
 
     sort: function (s) {
-      //if s == current sort, reverse
       if (s === this.currentSort) {
         this.currentSortDir = this.currentSortDir === "asc" ? "desc" : "asc";
       }
@@ -266,7 +234,6 @@ export default {
   },
   computed: {
     sortedTrips: function () {
-      // console.log(this.tripList);
       if (this.tripList != undefined && this.tripList != null) {
         let tripListToSort = this.tripList;
         return tripListToSort.sort((a, b) => {

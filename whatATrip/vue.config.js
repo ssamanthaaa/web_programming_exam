@@ -5,7 +5,9 @@
 process.env.NODE_ENV === "production";
 module.exports = {
   publicPath: process.env.NODE_ENV === "production" ? "/WhatATrip/" : "/",
-
+  // devServer: {
+  //   proxy: 'http://localhost:8080/'
+  // },
   // pages: {
   //     index: {
   //         entry: 'src/main.js',
