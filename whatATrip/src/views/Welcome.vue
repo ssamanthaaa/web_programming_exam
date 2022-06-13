@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import UserService from "@/services/UserService";
+// import UserService from "@/services/UserService";
 export default {
   name: "Welcome-component",
   components: {},
@@ -80,31 +80,29 @@ export default {
 
   methods: {
     //double check if user is authenticate
-    getUsernameUser: async function () {
-      let okResponse;
-      let errorStatus = 0;
-      await UserService.getUsername(this.token)
-        .then((response) => {
-          // console.log(response);
-          okResponse = response;
-        })
-        .catch(function (error) {
-          errorStatus = error.response.status;
-          console.log(error);
-        });
-      // console.log(`errorStatus: ${errorStatus}`);
-      if (errorStatus != 0) {
-        this.showExpiredError = true;
-        setTimeout(() => {
-          UserService.logout();
-          this.redirectLogout();
-        }, 2000);
-      } else {
-        if (okResponse.status == 200) {
-          // console.log(okResponse);
-        }
-      }
-    },
+    // getUsernameUser: async function () {
+    //   let okResponse;
+    //   let errorStatus = 0;
+    //   await UserService.getUsername(this.token)
+    //     .then((response) => {
+    //       okResponse = response;
+    //     })
+    //     .catch(function (error) {
+    //       errorStatus = error.response.status;
+    //       console.log(error);
+    //     });
+    //   if (errorStatus != 0) {
+    //     this.showExpiredError = true;
+    //     setTimeout(() => {
+    //       UserService.logout();
+    //       this.redirectLogout();
+    //     }, 2000);
+    //   } else {
+    //     if (okResponse.status == 200) {
+    //       // console.log(okResponse);
+    //     }
+    //   }
+    // },
 
     redirectLogout: function () {
       this.$router.push({
@@ -114,7 +112,7 @@ export default {
   },
 
   mounted: async function () {
-    await this.getUsernameUser();
+    // await this.getUsernameUser();
   },
 
   beforeMount: async function () {
