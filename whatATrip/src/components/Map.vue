@@ -1,9 +1,5 @@
 <template>
-  <!-- <section> -->
   <div>
-    <!-- <div class="heading">
-                <h2>Map</h2>
-            </div> -->
     <div class="constainer justify-content-center">
       <l-map
         style="height: 470px; width: 100%"
@@ -12,31 +8,14 @@
         ref="map"
       >
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-        <!-- <l-marker
-            v-for="(marker, index) in markers"
-            :key="index"
-            :lat-lng.sync="marker.position"
-            :icon="marker.icon"
-            @click="alert(marker.tooltip)"
-            draggable="false"
-          ></l-marker
-          > -->
-        <!-- :lat-lng="markerLatLng" -->
       </l-map>
-      <!-- <l-polyline
-          v-for="(value, index) in allPolylines"
-          :key="index"
-          :lat-lngs="value"
-          :icon="marker.icon"
-        ></l-polyline> -->
     </div>
   </div>
-  <!-- </section> -->
 </template>
 
 <script>
 import * as L from "leaflet";
-import { LMap, LTileLayer /*LMarker*/ } from "vue2-leaflet";
+import { LMap, LTileLayer } from "vue2-leaflet";
 import { latLngBounds } from "leaflet";
 
 export default {
@@ -47,7 +26,6 @@ export default {
   components: {
     LMap,
     LTileLayer,
-    // LMarker,
   },
   data() {
     return {
@@ -68,10 +46,8 @@ export default {
     };
   },
   methods: {
-    alert(item) {
-      alert("Luogo: " + JSON.stringify(item));
-    },
-
+    // A function that is called when the map is mounted. It is used to load the map and the trips on
+    // the map.
     loadMap() {
       this.map = this.$refs.map.mapObject;
       let drawnItems = new L.FeatureGroup().addTo(this.map);
@@ -110,10 +86,8 @@ export default {
         }
       }
       if (this.tripList.length > 0) {
-        // let mygeojson =
         for (let i = 0; i < this.tripList.length; ++i) {
           this.j = i;
-          // let featureJson =
           L.geoJson(this.tripList[i].GEOJSON, {
             onEachFeature: onEachFeature,
             color: "red",
