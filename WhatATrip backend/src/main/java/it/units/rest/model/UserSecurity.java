@@ -8,6 +8,7 @@ public class UserSecurity extends User {
 	private String role = null;
 	
 	public UserSecurity() {}
+
 	
 	public UserSecurity( String password, String token ) {
 		this.password = password;
@@ -22,6 +23,7 @@ public class UserSecurity extends User {
 		toString();
 	}
 	
+	
 	public UserSecurity( String username, String email, String password, String token, String role ) {
 		this.setUsername( username );
 		this.setEmail(email);
@@ -30,6 +32,7 @@ public class UserSecurity extends User {
 		this.role = role;
 		toString();
 	}
+
 	
 	public String getPassword() {
 		return password;

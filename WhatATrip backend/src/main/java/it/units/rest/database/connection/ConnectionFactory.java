@@ -3,7 +3,6 @@ package it.units.rest.database.connection;
 
 import it.units.rest.config.DbConfig;
 //import com.tutorialacademy.rest.database.connection.orientdb.OrientDbConnection;
-import it.units.rest.database.connection.SQLiteConnection;
 import it.units.rest.database.connection.SQLConnection;
 
 public class ConnectionFactory {

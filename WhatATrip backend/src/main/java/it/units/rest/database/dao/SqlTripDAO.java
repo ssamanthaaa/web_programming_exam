@@ -37,11 +37,9 @@ public class SqlTripDAO implements TripDAO{
 
 
 	public boolean createTrip( Trip trip ) throws SQLException {
-//		logger.debug( "createTrip: " + trip.getId() );
 		System.out.println(trip);
 		PreparedStatement stmt = null;
 	    try {
-//	    	System.out.println(trip.getGeoJson());
 	    	
 	    	stmt = connection.prepareStatement( "INSERT INTO TRIP(" + 
 	    									    "DATE,PLACE, TRANSPORTATION, GEOJSON, USER, DESCRIPTION) VALUES" +
@@ -84,13 +82,11 @@ public class SqlTripDAO implements TripDAO{
 	    	stmt.setInt(2, userId);
 		    rs = stmt.executeQuery();
 		    if( rs.next() ) {
-	//		    Integer tripId = rs.getInt("ID");
 		    	Date tripDate = rs.getDate("DATE");
 		    	String tripPlace = rs.getString("PLACE");
 		    	String tripTransportation = rs.getString("TRANSPORTATION");
 		    	Object tripGeoJson = rs.getObject("GEOJSON");
 		    	String tripDescription = rs.getString("DESCRIPTION");
-	//		    Integer tripUser = rs.getInt("USER");
 		    	
 		    	trip = new Trip( tripId, tripDate, tripPlace, tripTransportation, tripGeoJson, userId, tripDescription);
 		    	
@@ -127,7 +123,6 @@ public class SqlTripDAO implements TripDAO{
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		List<Trip> trip = new ArrayList<Trip>();
-//		List<JsonObject> tripList = new ArrayList<JsonObject>();
 		JsonArray tripArray = new JsonArray();
 		
 	    try {
@@ -156,9 +151,7 @@ public class SqlTripDAO implements TripDAO{
 				tripJson.addProperty("DESCRIPTION", tripDescription);
 				System.out.println("tripJson: " + tripJson);
 		    	
-//				tripArray.add(tripJson);
 				tripArray.add(tripJson);
-//		    	trip.add( new Trip(tripId, tripDate, tripPlace, tripTransportation, tripGeoJson, tripUser) );
 		    }
 		    
 	    } catch ( SQLException e ) {
@@ -173,7 +166,6 @@ public class SqlTripDAO implements TripDAO{
 				logger.warn( e.getMessage() );
 			}
 	    }
-//	    System.out.println(trip);
 	    return tripArray;
 	}
 

@@ -1,6 +1,7 @@
 package it.units.rest.database.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +11,10 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import it.units.rest.database.dao.UserDAO;
 import it.units.rest.exception.UserExistingException;
@@ -17,6 +22,7 @@ import it.units.rest.exception.UserNotFoundException;
 import it.units.rest.model.User;
 import it.units.rest.model.UserSecurity;
 import it.units.rest.restapi.ResponseBuilder;
+import it.units.rest.security.TokenSecurity;
 
 
 public class SqlUserDAO implements UserDAO {
@@ -55,11 +61,7 @@ public class SqlUserDAO implements UserDAO {
 	    	stmt.setString( 4, user.getRole() );
 		    stmt.executeUpdate();
 		    
-	    } 
-//	    catch ( UserExistingException e ) {
-//			System.out.println("(SqlUserDAO) UserExistingException");
-//			logger.debug( e.getClass().getName() + ": " + e.getMessage() );
-//		}
+	    }
 	    catch ( SQLException e ) {
 	    	System.out.println("SQLException");
 	    	logger.debug( e.getClass().getName() + ": " + e.getMessage() );
@@ -84,7 +86,6 @@ public class SqlUserDAO implements UserDAO {
 			throw new UserNotFoundException( username );
 	    } catch ( UserExistingException e ) {
 			System.out.println("(SqlUserDAo findId username) UserExistingException");
-//			return ResponseBuilder.createResponse( Response.Status.CONFLICT, e.getMessage() );
 		}
 	    finally {
 	    	try {
@@ -92,7 +93,6 @@ public class SqlUserDAO implements UserDAO {
 				throw new UserNotFoundException( username );
 			} catch ( UserExistingException e ) {
 				System.out.println("(SqlUserDAo findId username) UserExistingException");
-//				return ResponseBuilder.createResponse( Response.Status.CONFLICT, e.getMessage() );
 			}
 	    }
 		return id;
@@ -246,25 +246,35 @@ public class SqlUserDAO implements UserDAO {
 	}
 
 	@Override
-	public List<User> getAllUsers() {
+	public JsonArray getAllUsers() {
 		logger.debug( "getAllUsers" );
 		
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		List<User> user = new ArrayList<User>();
+//		List<User> user = new ArrayList<User>();
+		JsonArray userArray = new JsonArray();
 		
 	    try {
-	    	stmt = connection.prepareStatement( "SELECT ID, USERNAME, EMAIL FROM USER;" );
+	    	stmt = connection.prepareStatement( "SELECT ID, USERNAME, EMAIL, ROLE FROM USER;" );
 		    rs = stmt.executeQuery();
+		    System.out.println(stmt);
 		    
 		    while( rs.next() ) {
+		    	JsonObject userJson = new JsonObject();
 		    	Integer userId = rs.getInt("ID");
 		    	String username = rs.getString("USERNAME");
 		    	String email = rs.getString("EMAIL");
+		    	String role = rs.getString("ROLE");
 		    	
-		    	user.add( new User( userId, username, email ) );
+//		    	user.add( new User( userId, username, email ) );
+		    	userJson.addProperty("ID", userId);
+		    	userJson.addProperty("USERNAME", username);
+		    	userJson.addProperty("EMAIL", email);
+		    	userJson.addProperty("ROLE", role);
+		    	System.out.println("USERJson: " + userJson);
+		    	
+		    	userArray.add(userJson);
 		    }
-		    
 	    } catch ( SQLException e ) {
 	    	logger.debug( e.getClass().getName() + ": " + e.getMessage() );
 	    }
@@ -277,7 +287,7 @@ public class SqlUserDAO implements UserDAO {
 			}
 	    }
 	    
-	    return user;
+	    return userArray;
 	}
 
 	@Override
@@ -385,34 +395,47 @@ public class SqlUserDAO implements UserDAO {
 		PreparedStatement stmt = null;
 		
 	    try {
-	    	// prepare query
-	    	StringBuffer query = new StringBuffer();
-	    	query.append( "UPDATE USER SET " );
-	    	
-	    	boolean comma = false;
-	    	List<String> prepare = new ArrayList<String>();
-	    	
-	    	if( user.getUsername() != null ) {
-	    		if( comma ) query.append(",");
-	    		query.append( "USERNAME=?" );
-	    		prepare.add( user.getUsername() );
-	    	}
-	    	if( user.getEmail() != null ) {
-	    		if( comma ) query.append(",");
-	    		query.append( "EMAIL=?" );
-	    		prepare.add( user.getEmail() );
-	    	}
-	    	
-	    	query.append(" WHERE ID=?");
-	    	stmt = connection.prepareStatement( query.toString() );
-	    	
-	    	for( int i = 0; i < prepare.size(); i++ ) {
-	    		stmt.setString( i+1, prepare.get(i) );
-	    	}
-	    	
-	    	stmt.setInt( prepare.size() + 1, user.getId() );
+	    	stmt = connection.prepareStatement( "UPDATE USER SET USERNAME=?, EMAIL=?, PASSWORD=? WHERE ID=?;" );
+	    	stmt.setString(1, user.getUsername());
+	    	stmt.setString(2, user.getEmail());
+	    	stmt.setString(3, user.getPassword());
+	    	stmt.setInt(4, user.getId());
 	    	
 	    	stmt.executeUpdate();
+	    	// prepare query
+//	    	StringBuffer query = new StringBuffer();
+//	    	query.append( "UPDATE USER SET " );
+//	    	
+//	    	boolean comma = false;
+//	    	List<String> prepare = new ArrayList<String>();
+//	    	
+//	    	if( user.getUsername() != null ) {
+//	    		if( comma ) query.append(",");
+//	    		query.append( "USERNAME=?" );
+//	    		prepare.add( user.getUsername() );
+//	    	}
+//	    	if( user.getEmail() != null ) {
+//	    		if( comma ) query.append(",");
+//	    		query.append( "EMAIL=?" );
+//	    		prepare.add( user.getEmail() );
+//	    	}
+//	    	if( user.getPassword() != null ) {
+//	    		if( comma ) query.append(",");
+//	    		query.append( "PASSWORD=?" );
+//	    		prepare.add( user.getPassword() );
+//	    	}
+//	    	
+//	    	
+//	    	query.append(" WHERE ID=?");
+//	    	stmt = connection.prepareStatement( query.toString() );
+//	    	
+//	    	for( int i = 0; i < prepare.size(); i++ ) {
+//	    		stmt.setString( i+1, prepare.get(i) );
+//	    	}
+//	    	
+//	    	stmt.setInt( prepare.size() + 1, user.getId() );
+//	    	
+//	    	stmt.executeUpdate();
 		    
 	    } catch ( SQLException e ) {
 	    	logger.debug( e.getClass().getName() + ": " + e.getMessage() );

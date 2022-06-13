@@ -12,16 +12,6 @@ public class TripDAOFactory {
 		// get connection
 		Connection connection = ConnectionFactory.getConnection();
 		
-		// use driver specified according to database
-//	        switch( DbConfig.getDbType() ) {
-//	            case SQL:
-//	                return new SqlUserDAO( connection );
-//	            case SQLITE:
-//	                return new SqlUserDAO( connection );
-//	            default:
-//	                // should not happen: we test for correct input in DbConfig.java
-//	                return null;
-//	        }
 		return new SqlTripDAO( connection );
 	}
 }

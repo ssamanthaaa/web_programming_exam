@@ -42,7 +42,6 @@ public class DbConfig {
 	
 	private static String getRelativeResourcePath( String resource ) {
 		if( resource == null || resource.equals("") ) return null;
-		
 		return DbConfig.class.getClassLoader().getResource(resource).getPath();
 	}
 	
@@ -64,9 +63,6 @@ public class DbConfig {
 		if( dataBaseType.equalsIgnoreCase( DataBaseType.SQL.toString() ) ) {
 			return DataBaseType.SQL;
 		}
-//		if( dataBaseType.equalsIgnoreCase( DataBaseType.SQLITE.toString() ) ) {
-//			return DataBaseType.SQLITE;
-//		}
 		else {
 			throw new  IllegalArgumentException("Not a valid supported dataBase: " + dataBaseType );
 		}

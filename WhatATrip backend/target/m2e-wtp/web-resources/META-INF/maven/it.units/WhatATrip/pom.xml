@@ -3,7 +3,7 @@
   
   <groupId>it.units</groupId>
   <artifactId>WhatATrip</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1</version>
   <packaging>war</packaging>
   
 	<properties>
@@ -126,6 +126,7 @@
 		<artifactId>sqlite-jdbc</artifactId>
 		<version>${sqlite.version}</version>
 	</dependency>
+	
 	<!-- Logging -->
 	<dependency>
 		<groupId>log4j</groupId>

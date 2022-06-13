@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  #whatatrip:
+  # build: ./
+  # image: samanthaaa/whatatrip
+  mysqldb:
+    image: mysql:latest
+    container_name: mysqldb
+    build: ./mysql_database
+    #command: "/restore.sh /backup/201708060500.trips.sql.gz"
+    #cap_add:
+    #  - SYS_NICE  # CAP_SYS_NICE
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-db-whatatrip:/var/lib/mysql
+     # If there is not scheme, restore the last created backup (if exists)
+     # - mysql-db-whatatrip:/var/lib/mysql/backup/latest.trips.sql.gz:/docker-entrypoint-initdb.d/trips.sql.gz
+      - ./init_trip.sql:/docker-entrypoint-initdb.d/init_trip.sql
+    environment:
+      - MYSQL_DATABASE=TRIPS
+      - MYSQL_ROOT_PASSWORD=Cioccolato123
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      #- MAX_BACKUPS=45
+      #- INIT_BACKUP=0
+      # Every day at 03:00
+      #- CRON_TIME=0 3 * * *
+      # Make it small
+      #- GZIP_LEVEL=9
+    restart: unless-stopped
+    networks:
+      - whatatrip-app
+
+  tomcat_:
+    build: .
+    image: tomcat:9.0-jdk15
+    container_name: tomcat-container
+    ports:
+      - 8080:8080
+    restart: on-failure
+    depends_on:
+      - mysqldb
+    networks:
+      - whatatrip-app
+
+volumes:
+  mysql-db-whatatrip:
+
+networks:
+  whatatrip-app:

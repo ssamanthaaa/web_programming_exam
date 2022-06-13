@@ -1,0 +1,8 @@
+DEBUG http-nio-8080-exec-1 it.units.rest.database.connection.SQLiteConnection - Opened mysql database successfully
+DEBUG http-nio-8080-exec-1 it.units.rest.database.connection.SQLiteConnection - java.sql.SQLIntegrityConstraintViolationException: Duplicate entry 'admin' for key 'user.USERNAME'
+DEBUG http-nio-8080-exec-1 it.units.rest.database.dao.SqlUserDAO - getUserIdByUsername: samantha
+DEBUG http-nio-8080-exec-1 it.units.rest.database.dao.SqlUserDAO - getUserAuthentication: 2
+DEBUG http-nio-8080-exec-1 it.units.rest.database.dao.SqlUserDAO - setUserAuthentication: 2
+DEBUG http-nio-8080-exec-5 it.units.rest.database.dao.SqlUserDAO - getUser: 2
+DEBUG http-nio-8080-exec-5 it.units.rest.database.dao.SqlUserDAO - getUserAuthentication: 2
+DEBUG http-nio-8080-exec-5 it.units.rest.database.dao.SqlUserDAO - getUser: 2

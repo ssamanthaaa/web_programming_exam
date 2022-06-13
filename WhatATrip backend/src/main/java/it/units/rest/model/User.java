@@ -18,6 +18,7 @@ public class User implements JsonSerializable {
 		this.username = username;
 	}
 	
+
 	public User( Integer id, String username, String email ) {	
 		this.id = id;
 		this.username = username;

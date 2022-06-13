@@ -19,13 +19,19 @@ import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.lang.JoseException;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import it.units.rest.database.dao.UserDAO;
@@ -55,12 +61,8 @@ public class UserRestService extends ResourceConfig {
 		try {
 			try {
 				// check if user no registered already
-//				Integer idByUsername = 
 				 userDao.getUserIdByUsername( userSecurity.getUsername() );
-//				 userDao.getUserIdByEmail( userSecurity.getEmail());
-	//				System.out.println(idByUsername);
 					throw new UserExistingException( userSecurity.getUsername() );
-				
 			}
 			
 			catch( UserNotFoundException e ) {
@@ -117,13 +119,12 @@ public class UserRestService extends ResourceConfig {
 			
 			// Return the token on the response
 			
-//			return ResponseBuilder.createResponse( Response.Status.OK, map );
 			JsonObject responJson = new JsonObject();
 			responJson.addProperty("USERNAME", userSecurity.getUsername());
 			responJson.addProperty("EMAIL", userSecurity.getEmail());
 			responJson.addProperty("ID", id);
+			responJson.addProperty("ROLE", userSecurity.getRole());
 			responJson.addProperty("x-access-token", token);
-//			String tokenJson = "{\"x-access-token\": \""+token+"\"}";
 			return Response.status(Response.Status.OK).entity(responJson.toString()).type(MediaType.APPLICATION_JSON).build();
 		}
 		catch( UserNotFoundException e ) {
@@ -167,11 +168,12 @@ public class UserRestService extends ResourceConfig {
 		UserDAO userDao = UserDAOFactory.getUserDAO();
 		
 		try {
-			List<JsonSerializable> usersJson = new ArrayList<JsonSerializable>();
-			usersJson.addAll( (Collection<? extends JsonSerializable>) userDao.getAllUsers() );
+			JsonArray usersJson = new JsonArray();
+			usersJson.addAll(userDao.getAllUsers());
+			System.out.println(usersJson);
 			
 			// Return the users on the response
-			return ResponseBuilder.createResponse( Response.Status.OK, usersJson );
+			return Response.status(Response.Status.OK).entity(usersJson.toString()).type(MediaType.APPLICATION_JSON).build();
 		}
 		catch( UserNotFoundException e ) {
 			return ResponseBuilder.createResponse( Response.Status.NOT_FOUND, e.getMessage() );
@@ -186,14 +188,18 @@ public class UserRestService extends ResourceConfig {
 	@Path("/update")
 	@RolesAllowed({"admin","user"}) // only an admin user should be allowed to request all users
 	@Produces("application/json")
-	public Response update( @Context HttpHeaders headers, User user ) {
+	public Response update( @Context HttpHeaders headers, UserSecurity userSecurity ) {
 		UserDAO userDao = UserDAOFactory.getUserDAO();
 		
 		try {
 			Integer id = getId( headers );
 			
-			user.setId( id );
-			userDao.updateUser( user );
+			userSecurity.setId( id );
+			String plainPassword = userSecurity.getPassword();
+			// generate password
+			userSecurity.setPassword( PasswordSecurity.generateHash( userSecurity.getPassword() ) );
+			
+			userDao.updateUser( userSecurity );
 			
 			// Return the token on the response
 			return ResponseBuilder.createResponse( Response.Status.OK, "User updated" );
@@ -241,6 +247,31 @@ public class UserRestService extends ResourceConfig {
 		return Integer.parseInt(id.get(0));
 	}
 
+	@DELETE
+	@Path("/logout")
+	@RolesAllowed({"admin","user", "guest"}) 
+	@Produces("application/json")
+	public Response logout(@Context HttpHeaders headers)  {
+		UserDAO userDao = UserDAOFactory.getUserDAO();
+		try {
+			Integer idJwt = getId( headers );
+			String token = TokenSecurity.generateJwtToken( idJwt, 1 );
+
+			// write the token to the database
+			UserSecurity sec = new UserSecurity( null, token);
+			sec.setId(idJwt );
+			userDao.setUserAuthentication( sec );
+			
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put( AuthenticationFilter.AUTHORIZATION_PROPERTY, token );
+		} catch( Exception e ) {
+			return ResponseBuilder.createResponse( Response.Status.UNAUTHORIZED );
+		}
+		
+		return ResponseBuilder.createResponse( Response.Status.OK, "User logout" );
+	}
+	
+	
 }
 
 

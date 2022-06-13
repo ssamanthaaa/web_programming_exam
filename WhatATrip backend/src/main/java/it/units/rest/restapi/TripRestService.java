@@ -46,29 +46,19 @@ import it.units.rest.security.PasswordSecurity;
 
 @Path("{userId}/trips")
 public class TripRestService extends ResourceConfig{
-//	Connection connection = null;
 	
 	@GET
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllUserTrips(@Context HttpHeaders headers, @PathParam("userId") Integer userId) {
-//		UserDAO userDao = UserDAOFactory.getUserDAO();
 		TripDAO tripDAO = TripDAOFactory.getTripDAO();
-//		User user = userDao.getUser( userId );
-//		List<Trip> trip = tripDAO.getAllUserTrips(userId);
 		
 		try {
 			Integer id = getId( headers );
 			
-//			List<JsonSerializable> tripsJson = new ArrayList<JsonSerializable>();
 			JsonArray tripsJson = new JsonArray();
-//			List<JsonObject> tripList = new ArrayList<JsonObject>();
-//			tripList.addAll(tripDAO.getAllUserTrips(userId));
-//			tripsJson.addAll( (Collection<? extends JsonSerializable>) tripDAO.getAllUserTrips(userId) );
 			tripsJson.addAll(tripDAO.getAllUserTrips(userId));
 			
-			// Return the users on the response
-//			return ResponseBuilder.createResponse( Response.Status.OK, tripList ).type(MediaType.APPLICATION_JSON);
 			return Response.status(Response.Status.OK).entity(tripsJson.toString()).type(MediaType.APPLICATION_JSON).build();
 
 		}
@@ -85,11 +75,8 @@ public class TripRestService extends ResourceConfig{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTrip(@Context HttpHeaders headers, @PathParam("userId") Integer userId, @PathParam("tripId") Integer tripId) {
-//		UserDAO userDao = UserDAOFactory.getUserDAO();
 		TripDAO tripDAO = TripDAOFactory.getTripDAO();
-//		User user = userDao.getUser( userId );
-//		List<Trip> trip = tripDAO.getAllUserTrips(userId);
-		
+
 		try {
 			Integer id = getId( headers );
 			if (id != userId) {
@@ -100,7 +87,6 @@ public class TripRestService extends ResourceConfig{
 			
 			System.out.println("trip --> " + trip);
 			// Return the users on the response
-//			return ResponseBuilder.createResponse( Response.Status.OK, trip);
 			return Response.status(Response.Status.OK).entity(trip.toString()).type(MediaType.APPLICATION_JSON).build();
 		}
 		catch( UserNotFoundException e ) {
@@ -119,16 +105,18 @@ public class TripRestService extends ResourceConfig{
 		try {
 			System.out.println("Controllo JWT");
 			Integer id = getId(headers );
-			if ( id != userId) {
+			System.out.println(id);
+			System.out.println(userId.equals(id));
+			if ( !userId.equals(id)) {
+				System.out.println("QUA");
 				return ResponseBuilder.createResponse( Response.Status.NOT_FOUND );
 			}
 			System.out.println(tripString);
 			Gson gson = new GsonBuilder().setDateFormat("yyy-MM-dd").create();
-//					new Gson();
+
 	        Trip trip = gson.fromJson(tripString, Trip.class);
 			tripDAO.createTrip(trip);
 			return ResponseBuilder.createResponse( Response.Status.OK, "Trip created" );
-//			return Response.status(Response.Status.OK).entity(trip.toString()).build();
 		} 
 		catch( UserNotFoundException e ) {
 			return ResponseBuilder.createResponse( Response.Status.NOT_FOUND, e.getMessage() );
@@ -153,14 +141,12 @@ public class TripRestService extends ResourceConfig{
 			}
 			System.out.println(tripString);
 			Gson gson = new GsonBuilder().setDateFormat("yyy-MM-dd").create();
-//					new Gson();
 	        Trip trip = gson.fromJson(tripString, Trip.class);
 	        if (trip.getId() != tripId) {
 	        	return ResponseBuilder.createResponse( Response.Status.FORBIDDEN );
 	        }
 			tripDAO.updateTrip(trip);
 			return ResponseBuilder.createResponse( Response.Status.OK, "Trip updated" );
-//			return Response.status(Response.Status.OK).entity(trip.toString()).build();
 		} 
 		catch( UserNotFoundException e ) {
 			return ResponseBuilder.createResponse( Response.Status.NOT_FOUND, e.getMessage() );
@@ -185,16 +171,10 @@ public class TripRestService extends ResourceConfig{
 			if ( id != userId) {
 				return ResponseBuilder.createResponse( Response.Status.FORBIDDEN );
 			}
-//			System.out.println(tripString);
 			Gson gson = new GsonBuilder().setDateFormat("yyy-MM-dd").create();
-//					new Gson();
-//	        Trip trip = gson.fromJson(tripString, Trip.class);
-//	        if (trip.getId() != tripId) {
-//	        	return ResponseBuilder.createResponse( Response.Status.FORBIDDEN );
-//	        }
+
 			tripDAO.deleteTrip(tripId);
 			return ResponseBuilder.createResponse( Response.Status.OK, "Trip deleted" );
-//			return Response.status(Response.Status.OK).entity(trip.toString()).build();
 		} 
 		catch( UserNotFoundException e ) {
 			return ResponseBuilder.createResponse( Response.Status.NOT_FOUND, e.getMessage() );

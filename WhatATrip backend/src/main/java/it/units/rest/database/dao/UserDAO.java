@@ -3,6 +3,8 @@ package it.units.rest.database.dao;
 
 import java.util.List;
 
+import com.google.gson.JsonArray;
+
 import it.units.rest.exception.UserExistingException;
 import it.units.rest.exception.UserNotFoundException;
 import it.units.rest.model.User;
@@ -16,11 +18,12 @@ public interface UserDAO {
 	public String getUserUsernameById( Integer id ) throws UserNotFoundException;
 	public User getUser( Integer id ) throws UserNotFoundException;
 	
-	public List<User> getAllUsers();
+	public JsonArray getAllUsers();
 	
 	public UserSecurity getUserAuthentication( Integer id ) throws UserNotFoundException;
 	public boolean setUserAuthentication( UserSecurity user ) throws UserNotFoundException;
 	
 	public boolean updateUser( User user ) throws UserNotFoundException;
 	public boolean deleteUser( Integer id ) throws UserNotFoundException;
+	
 }

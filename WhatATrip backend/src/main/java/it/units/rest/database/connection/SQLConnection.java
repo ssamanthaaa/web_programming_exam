@@ -19,7 +19,7 @@ import it.units.rest.security.PasswordSecurity;
 
 public class SQLConnection implements it.units.rest.database.connection.Connection {
 
-	final static Logger logger = Logger.getLogger( SQLiteConnection.class );
+	final static Logger logger = Logger.getLogger( SQLConnection.class );
 	
 	Connection connection = null;
 	
@@ -31,19 +31,12 @@ public class SQLConnection implements it.units.rest.database.connection.Connecti
 	@Override
 	public boolean open() {
 		connection = null;
+		String path = null;
 	    try {
-	      Class.forName("com.mysql.jdbc.Driver");
-//		      connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/TRIPS","root","Cioccolato123"); 
+	      Class.forName("com.mysql.cj.jdbc.Driver");
+
 	      
-//	      SQLConfig config = new SQLConfig();
-//	      config.setOpenMode(SQLiteOpenMode.READWRITE);
-//	      config.setOpenMode(SQLiteOpenMode.CREATE);
-//	      // serialized mode for concurrent access - TODO: use connection pooling
-//	      config.setOpenMode(SQLiteOpenMode.FULLMUTEX);
-	      
-	      String path = null;
-	      
-	      if( DbConfig.getDbPath() != null ) {
+	      if( DbConfig.getDbPath() != null ) {	 
 	    	  path = DbConfig.getDbPath();
 	      }
 	      else if( DbConfig.getDbName() != null ) {
@@ -58,6 +51,7 @@ public class SQLConnection implements it.units.rest.database.connection.Connecti
 	      
 	    } catch ( Exception e ) {
 	      logger.debug( e.getClass().getName() + ": " + e.getMessage() );
+	      System.out.println("!--------- path: " + path + "-----------");
 	      System.out.println("Exception!!");
 	      System.exit(0);
 	    }
@@ -108,8 +102,6 @@ public class SQLConnection implements it.units.rest.database.connection.Connecti
 					     " ID INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL," +
 					     " USERNAME 	  VARCHAR(45) UNIQUE NOT NULL, " +
 					     " EMAIL    	  VARCHAR(45) UNIQUE NOT NULL, " + 
-//						     " FIRSTNAME      TEXT, " + 
-//						     " LASTNAME       TEXT, " +
 					     " PASSWORD		  VARCHAR(200) NOT NULL, " + 
 					     " TOKEN          TEXT, " + 
 					     " ROLE           VARCHAR(20)"; 

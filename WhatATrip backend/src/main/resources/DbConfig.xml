@@ -11,7 +11,9 @@
 <Configuration>
 	<dbType>SQL</dbType>
 	<dbName>TRIPS</dbName>
-	<dbPath>jdbc:mysql://localhost:3306/TRIPS</dbPath>
+	<!--  <dbPath>jdbc:mysql://localhost:3306/TRIPS</dbPath>-->
+	<dbPath>jdbc:mysql://mysqldb:3306/TRIPS</dbPath><!-- QUANDO SU DOCKER VA QUESTO-->
+	<!-- <dbPath>jdbc:mysql://mysql-container:3307/trips</dbPath> -->
 	<dbPort>3306</dbPort>
 	<dbUser>root</dbUser>
 	<dbPassword>Cioccolato123</dbPassword>

@@ -13,6 +13,7 @@ public class PasswordSecurity {
 	
 	private static final int saltLength = 16;
 	private static final int iterations = 1000;
+
 	
 	public static String generateHash( String password ) throws NoSuchAlgorithmException, InvalidKeySpecException {
         char[] chars = password.toCharArray();

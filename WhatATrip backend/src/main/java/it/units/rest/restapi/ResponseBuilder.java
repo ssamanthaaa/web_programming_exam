@@ -3,7 +3,6 @@ package it.units.rest.restapi;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -14,6 +13,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import it.units.rest.model.JsonSerializable;
+
 
 public class ResponseBuilder {
 	
