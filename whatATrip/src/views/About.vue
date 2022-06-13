@@ -2,22 +2,22 @@
   <div class="container my-margin" id="app">
     <section>
       <h2 class="titles">Specification of the project and technologies used</h2>
-      <!-- <p> -->
-      The goal of this project was to realize a web application where a
-      registered user can save information about his trips. The users will have
-      to login into the platform and then he will be able to see all his trips
-      and create more of them. Each trip has a date, a transportation type, a
-      path, a small description of the trip that is not mandatory, and a list of
-      stages that can also have a name and a small description. On the home
-      page, the user can look at all his trips, but also he can filter them
-      based on a single date or a range of dates. A trip can be modified or
-      deleted at any moment. A new user can create an account and in a few
-      seconds he will be able to create his first trip. The technologies used to
-      realize this web application are:
+      <p>
+        The goal of this project was to realize a web application where a
+        registered user can save information about his trips. The users will
+        have to login into the platform and then he will be able to see all his
+        trips and create more of them. Each trip has a date, a transportation
+        type, a path, a small description of the trip that is not mandatory, and
+        a list of stages that can also have a name and a small description. On
+        the home page, the user can look at all his trips, but also he can
+        filter them based on a single date or a range of dates. A trip can be
+        modified or deleted at any moment. A new user can create an account and
+        in a few seconds he will be able to create his first trip. The main
+        technologies used to realize this web application are:
+      </p>
       <ul>
         <li>Apache Tomcat</li>
-        <li>Eclipse for the development of the backend part</li>
-        <li>Visual Studio Code for the development of the frontend part</li>
+        <li>Maven</li>
         <li>MySQL</li>
         <li>Axios</li>
         <li>Vue.js framework</li>
@@ -28,12 +28,10 @@
           >
         </li>
       </ul>
-      <!-- To deliver the project docker has been used. -->
-      <!-- </p> -->
     </section>
     <section>
       <h2 class="titles">Future updates ideas</h2>
-      Some possible future updates ideas are:
+      <p>Some possible future updates ideas are:</p>
       <ul>
         <li>add the possibility to share a trip with your trip buddy</li>
         <li>
@@ -107,5 +105,8 @@ section {
 }
 section h2 {
   color: #ff6f3c;
+}
+p {
+  font-size: 16px;
 }
 </style>
