@@ -3,7 +3,6 @@
     <nav
       class="navbar navbar-dark navbar-expand-lg fixed-top bg-white portfolio-navbar myNavbar"
     >
-      <!-- gradient -->
       <div class="container">
         <router-link to="/welcome" class="navbar-brand logo">
           <img
@@ -13,7 +12,6 @@
           />
           What a trip
         </router-link>
-        <!-- <a class="navbar-brand logo" href="#">What a trip</a> -->
         <button
           data-bs-toggle="collapse"
           class="navbar-toggler"
@@ -25,13 +23,11 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item" v-if="userRole === 'admin'">
-              <!-- <a class="nav-link active" href="index.html">Home</a> -->
               <router-link to="admin-dashboard" class="nav-link active">
                 <b-icon icon="person-fill"></b-icon>
               </router-link>
             </li>
             <li class="nav-item">
-              <!-- <a class="nav-link active" href="index.html">Home</a> -->
               <router-link to="dashboard" class="nav-link active"
                 >Home</router-link
               >
@@ -75,14 +71,6 @@
         >
       </template>
     </b-modal>
-    <!-- <div class="row justify-content-center margin" v-if="showLoaderLogout">
-      <div class="loader">
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <h3>Thanks, bye!</h3>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -101,19 +89,13 @@ export default {
     };
   },
   methods: {
-    // logout: function () {
-    //   this.showLoaderLogout = true;
-    //   setTimeout(() => {
-    //     UserService.logout();
-    //     this.$router.push({
-    //       path: "/login",
-    //     });
-    //   }, 2000);
-    // },
+    // Function that is called when the user clicks on the logout "button". It sets the showLoaderLogout
+    // to true, which shows the loader. Then it waits 2 seconds and calls the logout method in the
+    // UserService.js file. After that it redirects the user to the login page.
     logout: async function () {
       this.showLoaderLogout = true;
       setTimeout(() => {
-        UserService.logout(this.id, this.token);
+        UserService.logout(this.token);
         this.$router.push({
           path: "/login",
         });
