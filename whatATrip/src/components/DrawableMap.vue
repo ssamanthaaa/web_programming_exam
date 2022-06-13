@@ -69,14 +69,13 @@ export default {
   components: {},
   data() {
     return {
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", //"http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       map: null,
       drawnItems: null,
       zoom: 8,
-      center: [45.859412, 13.601074], //45.65052568917208, 13.76517096104127
+      center: [45.859412, 13.601074],
       bounds: null,
       tileLayer: null,
-      // caller: null,
       geoJsonText: null,
       distanceError: false,
       distance: null,
@@ -86,11 +85,11 @@ export default {
   },
   mounted() {
     this.drawnItems = this.initMap();
-    // this.$emit(
-    //   "updateCoordinates",
-    //   this.drawnItems.toGeoJSON(),
-    //   this.maxDistanceError
-    // );
+    this.$emit(
+      "updateCoordinates",
+      this.drawnItems.toGeoJSON(),
+      this.maxDistanceError
+    );
   },
 
   methods: {
@@ -103,11 +102,8 @@ export default {
     boundsUpdated(bounds) {
       this.bounds = bounds;
     },
-    // openPopUp(latLng, caller) {
-    //   this.caller = caller;
-    //   console.log("open");
-    // },
 
+    // Initializing the map.
     initMap() {
       this.map = this.$refs.map.mapObject;
       // FeatureGroup is to store editable layers
@@ -131,11 +127,10 @@ export default {
         dragMode: false,
         cutPolygon: false,
       });
-      // L.control.ruler().addTo(this.map);
+
+      // A function that is called on each feature in the GeoJSON file.
       function onEachFeature(feature, layer) {
         drawnItems.addLayer(layer);
-        // if (feature.geometry.type === "Point") {
-        // console.log(feature.geometry);
         layer.bindPopup(
           "<p>" +
             feature.properties.name +
@@ -147,9 +142,8 @@ export default {
             feature.properties.description +
             "</p>"
         );
-        // }
       }
-      // console.log(this.myTripGeoJSON);
+
       if (this.myTripGeoJSON == null || this.myTripGeoJSON === "undefined") {
         // console.log("myTripGeoJSOn null or undefined");
       } else {
@@ -161,10 +155,7 @@ export default {
           let path = this.myTripGeoJSON.features.filter(
             (value) => value.geometry.type === "LineString"
           );
-          // console.log(featureJson.getLayers());
-          // this.map.on("load", showText);
           showText(featureJson.getLayers());
-          // console.log(path);
           if (path != null && path.length > 0) {
             this.map.pm.addControls({ drawPolyline: false });
             this.map.pm.addControls({ drawMarker: true });
@@ -175,10 +166,7 @@ export default {
                 this.myTripGeoJSON.features[i].geometry.coordinates[0],
                 this.myTripGeoJSON.features[i].geometry.coordinates[1],
               ]);
-              // console.log(point);
-              // console.log(path[0]);
               let line = turf.lineString(path[0].geometry.coordinates);
-              // console.log(line);
 
               let distance = turf.pointToLineDistance(point, line, {
                 units: "meters",
@@ -186,7 +174,6 @@ export default {
               if (distance > 200) {
                 this.distance = distance.toFixed(2);
                 this.distanceError = true;
-                // console.log(`distanceError = ${this.distanceError}`);
                 this.$emit(
                   "updateCoordinates",
                   drawnItems.toGeoJSON(),
@@ -204,6 +191,7 @@ export default {
 
       let polyline = this.getPath(drawnItems);
 
+      // The code below is listening for the pm:create event. This event is fired when a new layer is created.
       this.map.on("pm:create", function (e) {
         let layer = e.layer;
 
@@ -248,14 +236,23 @@ export default {
         }
       });
 
+      // Listening for the pm:enable event. This event is fired when the user clicks on the edit button.
       drawnItems.on("pm:enable", () => {
-        $this.editRouteAlert = true;
+        this.editRouteAlert = true;
       });
+      // Listening for the pm:disable event. This event is fired when the user clicks on the edit button.
       drawnItems.on("pm:disable", () => {
-        $this.editRouteAlert = false;
+        this.editRouteAlert = false;
         this.distanceError = false;
       });
 
+      /*
+        The code is listening for the pm:edit event. This event is triggered when a user clicks
+        on a marker or line. If the user clicks on a marker, the code will check if the marker is
+        within 200 meters from the line. If it is, the marker will be added to the map. If it is not,
+        the marker will not be added to the map and an error message will be displayed. If the user
+        clicks on a line, the code will remove all markers from the map.
+      */
       drawnItems.on("pm:edit", function (e) {
         let layer = e.layer;
         $this.editRouteAlert = false;
@@ -281,9 +278,11 @@ export default {
               $this.distanceError
             );
             $this.distance = distance.toFixed(2);
+            $this.map.pm.addControls({ drawMarker: true });
           } else {
             $this.distance = distance.toFixed(2);
             $this.distanceError = true;
+            $this.map.pm.addControls({ drawMarker: false });
           }
         }
         $this.$emit(
@@ -292,36 +291,47 @@ export default {
           $this.distanceError
         );
       });
-      drawnItems.on("pm:snapdrag", function (e) {
-        let layer = e.layer;
-        if (layer.pm._shape === "Marker") {
-          let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
-          let line = turf.lineString(polyline);
 
-          let distance = turf.pointToLineDistance(point, line, {
-            units: "meters",
-          });
-          if (distance <= 200) {
-            $this.distanceError = false;
-            drawnItems.addLayer(layer);
-            $this.$emit(
-              "updateCoordinates",
-              drawnItems.toGeoJSON(),
-              $this.distanceError
-            );
-            $this.distance = distance.toFixed(2);
-          } else {
-            $this.distance = distance.toFixed(2);
-            $this.distanceError = true;
-            // $this.map.removeLayer(layer);
-          }
-        }
-      });
+      /*
+       The code is listening for the pm:snapdrag event fired when a user moves a marker in the map, 
+       this code checks if the marker is within 200 meters of the polyline. If it is, then the marker 
+       is added to the map, otherwise the marker is not added to the map.
+      */
+      // drawnItems.on("pm:snapdrag", function (e) {
+      //   let layer = e.layer;
+      //   if (layer.pm._shape === "Marker") {
+      //     let point = turf.point([layer._latlng.lng, layer._latlng.lat]);
+      //     let line = turf.lineString(polyline);
 
+      //     let distance = turf.pointToLineDistance(point, line, {
+      //       units: "meters",
+      //     });
+      //     if (distance <= 200) {
+      //       $this.distanceError = false;
+      //       drawnItems.addLayer(layer);
+      //       $this.$emit(
+      //         "updateCoordinates",
+      //         drawnItems.toGeoJSON(),
+      //         $this.distanceError
+      //       );
+      //       $this.distance = distance.toFixed(2);
+      //     } else {
+      //       $this.distance = distance.toFixed(2);
+      //       $this.distanceError = true;
+      //     }
+      //   }
+      // });
+
+      // Listening for the pm:globalremovalmodetoggled event and then setting the editRouteAlert to
+      // true.
       this.map.on("pm:globalremovalmodetoggled", () => {
         $this.editRouteAlert = true;
       });
 
+      /* 
+        The code here is listening for the pm:remove event fired when the user removes a marker or
+        a route from the map.
+      */
       this.map.on("pm:remove", (e) => {
         $this.editRouteAlert = false;
         let layer = e.layer;
@@ -344,17 +354,27 @@ export default {
         showText(e);
       });
 
+      // Converting the drawnItems to a GeoJSON object and then converting it to a string.
       function showText() {
         let geojson = JSON.stringify(drawnItems.toGeoJSON(), null, 4);
         $this.geoJsonText = geojson.toString();
       }
+      /*
+        Adding an event listener to the map. The event listener is listening for the
+        pm:create event. When the pm:create event is triggered, the showText function is called.
+      */
       this.map.addEventListener("pm:create", showText);
+
+      /*
+        Adding an event listener to the drawnItems layer. The event listener is listening for the
+        pm:edit event. When the pm:edit event is triggered, the showText function is called.
+      */
       drawnItems.addEventListener("pm:edit", showText);
 
       return drawnItems;
     },
 
-    // emit updated coordinates to parent (UpdateTrip.vue)
+    // Emitting updated coordinates to parent (UpdateTrip.vue)
     updateCoordinates() {
       this.$emit(
         "updateCoordinates",
@@ -363,6 +383,7 @@ export default {
       );
     },
 
+    // Filtering the drawnItems object to get the coordinates of the path.
     getPath(drawnItems) {
       let features = drawnItems.toGeoJSON().features;
       if (features.length > 0) {
