@@ -112,7 +112,7 @@
                 class="form-control"
                 type="text"
                 v-model="value.geometry.coordinates[1]"
-                @change="updateStage()"
+                readonly
               />
             </div>
             <div class="col-sm">
@@ -121,7 +121,7 @@
                 class="form-control"
                 type="text"
                 v-model="value.geometry.coordinates[0]"
-                @change="updateStage()"
+                readonly
               />
             </div>
             <div class="col-sm">
@@ -177,14 +177,6 @@
       <p class="error-marker">You can't save a trip without a route.</p>
     </div>
 
-    <!-- token expired notification -->
-    <!-- <notifications
-      group="unauthorized"
-      position="top center"
-      width="40%"
-      style="top: 40%"
-      v-if="showErrorMessage"
-    /> -->
     <div class="row margin-button">
       <div class="col" v-if="idTrip != null">
         <button
@@ -316,7 +308,6 @@
 
 <script>
 import DrawableMap from "@/components/DrawableMap.vue";
-import moment from "moment";
 import TripService from "@/services/TripService.js";
 import UserService from "@/services/UserService";
 
@@ -368,7 +359,7 @@ export default {
       showExpiredError: false,
 
       showDeleteTrip: false,
-      showLoader: true,
+      showLoader: false,
     };
   },
 
@@ -387,6 +378,7 @@ export default {
   mounted: function () {},
 
   methods: {
+    // Checking if the user has filled in all the required fields.
     checkInformations: function () {
       if (!this.date) {
         this.validation.invalid.date = "Please select a date.";
@@ -447,6 +439,8 @@ export default {
       }
     },
 
+    // Checking to see if the route has been drawn. If it has, it will return false. If it hasn't, it
+    // will return true.
     checkRoute: function () {
       if (this.myTripGeoJSON.features.length > 0) {
         this.routeError = false;
@@ -457,10 +451,13 @@ export default {
       }
     },
 
+    // Function that is called when the user clicks the delete button, it sets the
+    // showDeleteTrip property to true.
     confirmDeleteTrip: function () {
       this.showDeleteTrip = true;
     },
 
+    // Function for deleting a trip from the database.
     deleteTrip: async function () {
       this.showLoader = true;
       let deleteResponse;
@@ -475,7 +472,6 @@ export default {
         });
       if (errorStatus != 0) {
         this.showExpiredError = true;
-        // this.showErrorNotification();
         setTimeout(() => {
           UserService.logout();
           this.redirectLogout();
@@ -489,14 +485,8 @@ export default {
       }
     },
 
-    getDate(datetime) {
-      return moment(String(datetime)).format("YYYY-MM-DD");
-    },
-
-    getDateDMY(datetime) {
-      return moment(String(datetime)).format("DD/MM/YYYY");
-    },
-
+    // Function that is called when the page is loaded. It is used to load the trip
+    // data from the database.
     loadTrip: async function () {
       let errorStatus = 0;
       await TripService.getTrip(this.idUser, this.idTrip, this.token)
@@ -509,7 +499,6 @@ export default {
         });
       if (errorStatus != 0) {
         this.showExpiredError = true;
-        // this.showErrorNotification();
         setTimeout(() => {
           UserService.logout();
           this.redirectLogout();
@@ -517,7 +506,6 @@ export default {
       } else {
         if (this.trip.status == 200) {
           this.trip = this.trip.data;
-          // console.log(this.trip);
           this.date = this.trip.DATE;
           this.place = this.trip.PLACE;
           this.transportation = this.trip.TRANSPORTATION;
@@ -526,13 +514,12 @@ export default {
           if (this.description != null) {
             this.showAddDescription = true;
           }
-          // console.log(this.myTripGeoJSON);
           this.getMainStagesAndPathCoordinate();
           this.dataLoaded = true;
         }
       }
     },
-    // save new trip/ update trip
+    // save new trip/ update trip, function called when the user click the save button
     saveTrip: async function () {
       let trip;
       let okResponse;
@@ -601,7 +588,6 @@ export default {
 
           if (errorStatus != 0) {
             this.showExpiredError = true;
-            // this.showErrorNotification();
             setTimeout(() => {
               UserService.logout();
               this.redirectLogout();
@@ -616,33 +602,24 @@ export default {
             }
           }
         }
-      } else {
-        // console.log(this.checkInformations());
       }
     },
 
-    // showErrorNotification: function () {
-    //   this.showErrorMessage = true;
-    //   // console.log(`errorNotification ${this.showErrorMessage}`);
-    //   this.$notify({
-    //     group: "unauthorized",
-    //     title: "Important message",
-    //     text: "Sorry you session is expired, you will be redirected to the login page.",
-    //     type: "error",
-    //   });
-    // },
-
+    // Redirecting the user to the dashboard page.
     redirectToDashboard: function () {
       this.$router.push({
         path: "/dashboard",
       });
     },
 
+    // Redirecting the user to the login page.
     redirectLogout: function () {
       this.$router.push({
         path: "/login",
       });
     },
+
+    // Getting the main stages and path coordinates from the GeoJSON file.
     getMainStagesAndPathCoordinate() {
       this.mainStages = [];
       this.pathCoordinates = [];
@@ -663,8 +640,8 @@ export default {
       this.stageNameKey += 1;
     },
 
+    // Updating the trip coordinates.
     updateTripCoordinates(value, maxDistanceError) {
-      // console.log(`maxDitance error = ${maxDistanceError}`);
       this.myTripGeoJSON = value;
       this.maxDistanceError = maxDistanceError;
       this.getMainStagesAndPathCoordinate();
