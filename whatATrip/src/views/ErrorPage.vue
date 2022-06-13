@@ -1,6 +1,6 @@
 <template>
   <div class="container" id="app">
-    <div class="center">
+    <div class="my-margin">
       <h1 class="titles">Error!</h1>
       <h3 class="titles">Page not found!</h3>
     </div>
