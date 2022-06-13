@@ -41,7 +41,7 @@ body {
 h1,
 h2,
 h3 {
-  font-family: "Shadows Into Light";
+  font-family: "Shadows Into Light", Avenir, Helvetica, Arial, sans-serif;
 }
 
 nav {
@@ -68,6 +68,7 @@ nav {
 * {
   box-sizing: border-box;
 }
+
 #footer {
   bottom: 0;
   width: 100%;
