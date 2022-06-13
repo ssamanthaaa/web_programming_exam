@@ -28,61 +28,61 @@ const routes = [
     path: "/welcome",
     name: "Welcome",
     component: Welcome,
-    // beforeEnter: (to, from, next) => {
-    //   if (localStorage.getItem("isLogged") === "false") {
-    //     next({ path: "/" });
-    //   } else {
-    //     next();
-    //   }
-    // },
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem("isLogged") === "false") {
+        next({ path: "/" });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
-    // beforeEnter: (to, from, next) => {
-    //   if (localStorage.getItem("isLogged") === "false") {
-    //     next({ path: "/" });
-    //   } else {
-    //     next();
-    //   }
-    // },
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem("isLogged") === "false") {
+        next({ path: "/" });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/admin-dashboard",
     name: "AdminDashboard",
     component: AdminDashboard,
-    // beforeEnter: (to, from, next) => {
-    //   if (localStorage.getItem("isLogged") === "false") {
-    //     next({ path: "/" });
-    //   } else {
-    //     next();
-    //   }
-    // },
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem("isLogged") === "false") {
+        next({ path: "/" });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/update-trip",
     name: "UpdateTrip",
     component: UpdateTrip,
-    // beforeEnter: (to, from, next) => {
-    //   if (localStorage.getItem("isLogged") === "false") {
-    //     next({ path: "/" });
-    //   } else {
-    //     next();
-    //   }
-    // },
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem("isLogged") === "false") {
+        next({ path: "/" });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/about",
     name: "About",
     component: About,
-    // beforeEnter: (to, from, next) => {
-    //   if (localStorage.getItem("isLogged") === "false") {
-    //     next({ path: "/" });
-    //   } else {
-    //     next();
-    //   }
-    // },
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem("isLogged") === "false") {
+        next({ path: "/" });
+      } else {
+        next();
+      }
+    },
   },
   {
     path: "/*",
