@@ -1,5 +1,4 @@
-# web_programming_exam
-## What A Trip
+## What A Trip - backend
 
 Dependencies for the REST web service are:
 * Jersey2 (Glassfish)
