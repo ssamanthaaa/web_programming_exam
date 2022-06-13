@@ -83,6 +83,7 @@ export default {
   },
 
   methods: {
+    // Function used to get all the users from the database.
     getUsers: async function () {
       let errorStatus = 0;
       let status;
@@ -91,20 +92,17 @@ export default {
           console.log(response);
           this.userList = response.data;
           status = response.status;
-          //   console.log(this.userList);
-          // console.log(status);
         })
         .catch(function (error) {
           errorStatus = error.response.status;
           console.log(error);
         });
-      // console.log(`errorStatus: ${errorStatus}`);
       if (errorStatus != 0) {
-        // this.showExpiredError = true;
-        // setTimeout(() => {
-        //   UserService.logout();
-        //   this.redirectLogout();
-        // }, 2000);
+        this.showExpiredError = true;
+        setTimeout(() => {
+          UserService.logout();
+          this.redirectLogout();
+        }, 2000);
       } else {
         if (status === 200) {
           console.log(this.userList);
